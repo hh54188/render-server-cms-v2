@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>DEMO</title>
+        <link rel="stylesheet" type="text/css" href="./bower_components/semantic/dist/semantic.min.css">
+        <link rel="stylesheet" type="text/css" href="./bower_components/prism/themes/prism-twilight.css">
+        <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="./bower_components/semantic/dist/semantic.min.js"></script>
+        <script type="text/javascript"  src="./bower_components/prism/prism.js"></script>
+        <style type="text/css">
+            label, span {
+                font-family: "思源黑体", "Source Han Sans", "微软雅黑", "Microsoft YaHei" !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="ui grid container centered">
+            <div class="ui modal">
+                <i class="close icon"></i>
+                <div class="header">
+                    Profile Picture
+                </div>
+                <div class="image content">
+                    <pre>
+                        <code class="language-css">
+                        </code>
+                    </pre>
+                </div>
+                <div class="actions">
+                    <div class="ui black deny button">
+                        Nope
+                    </div>
+                    <div class="ui positive right labeled icon button">
+                        Yep, that's me
+                        <i class="checkmark icon"></i>
+                    </div>
+                </div>
+            </div>        
+            <div class="row"></div>
+            <div class="row">
+                <div class="column">
+                    <div id="container">
+                        <div class="ui top attached tabular menu">
+                            <a class="active item" data-tab="first">First</a>
+                            <a class="item" data-tab="second">Second</a>
+                            <a class="item" data-tab="third">Third</a>
+                        </div>
+                        <div class="ui bottom attached active tab segment" data-tab="first">
+                            <div class="ui equal width form">
+
+                                <div class="fields">
+                                    <div class="field">
+                                        <label><span>选择模板</span></label>
+                                        <select class="ui search dropdown">
+                                            <option>China</option>
+                                            <option>USA</option>
+                                            <option>England</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="fields">
+                                    <div class="field">
+                                        <label>Width</label>
+                                        <input type="text" placeholder="First Name">
+                                    </div>
+                                    <div class="field">
+                                        <label>Height</label>
+                                        <input type="text" placeholder="First Name">
+                                    </div>                                    
+                                </div>
+                                <div class="fields">
+                                    <div class="field">
+                                        <label>Background Color</label>
+                                        <input type="text" placeholder="First Name">
+                                    </div>
+                                    <div class="field">
+                                        <label>Font Color</label>
+                                        <input type="text" placeholder="First Name">
+                                    </div>                                    
+                                </div>
+                                <div class="fields">
+                                    <div class="field">
+                                        <button class="ui basic button"><i class="icon plus"></i><span>修改文件</span></button>
+                                    </div>
+                                </div>                          
+                                <div class="ui submit primary button"><span>提交</span></div>
+                            </div>
+                        </div>
+                        <div class="ui bottom attached tab segment" data-tab="second">
+                            Second
+                        </div>
+                        <div class="ui bottom attached tab segment" data-tab="third">
+                            Third
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        <script type="text/javascript">
+            $('.menu .item').tab();
+            $('.dropdown').dropdown({
+                onChange: function (value, text, $choice) {
+                    console.log(value, text, $choice);
+                }
+            });
+            $('.ui.modal').modal('show');
+        </script>
+   </body>
+</html>
