@@ -41,15 +41,30 @@
                 <div class="column">
                     <div id="container">
                         <div class="ui top attached tabular menu">
-                            <a class="active item" data-tab="first">First</a>
+                            <a class="active item" data-tab="first"><span>测试旧模板</span></a>
                             <a class="item" data-tab="second">Second</a>
                             <a class="item" data-tab="third">Third</a>
                         </div>
                         <div class="ui bottom attached active tab segment" data-tab="first">
-                            <div class="ui equal width form">
-
-                                <div class="fields">
+                            <div class="ui form">
+                                <div class="inline fields">
                                     <div class="field">
+                                        <br>
+                                        <div class="ui toggle checkbox">
+                                            <input type="checkbox" name="public1">
+                                            <label>测试Production目录下的模板</label>
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <br>
+                                        <div class="ui toggle checkbox">
+                                            <input type="checkbox" name="public2">
+                                            <label>所有模板</label>
+                                        </div>                               
+                                    </div>
+                                </div>
+                                <div class="fields">
+                                    <div class="six wide field">
                                         <label><span>选择模板</span></label>
                                         <select class="ui search dropdown">
                                             <option>China</option>
@@ -58,32 +73,84 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="fields">
-                                    <div class="field">
-                                        <label>Width</label>
-                                        <input type="text" placeholder="First Name">
-                                    </div>
-                                    <div class="field">
-                                        <label>Height</label>
-                                        <input type="text" placeholder="First Name">
-                                    </div>                                    
-                                </div>
-                                <div class="fields">
-                                    <div class="field">
-                                        <label>Background Color</label>
-                                        <input type="text" placeholder="First Name">
-                                    </div>
-                                    <div class="field">
-                                        <label>Font Color</label>
-                                        <input type="text" placeholder="First Name">
-                                    </div>                                    
-                                </div>
-                                <div class="fields">
-                                    <div class="field">
-                                        <button class="ui basic button"><i class="icon plus"></i><span>修改文件</span></button>
-                                    </div>
-                                </div>                          
-                                <div class="ui submit primary button"><span>提交</span></div>
+                                <p><span>模板所属测试数据</span></p>
+                                <label>暂无测试数据</label>
+                                <button class="ui button basic small">
+                                    <span>添加测试数据</span>
+                                </button>
+                                <table class="ui compact celled definition table">
+                                    <thead class="full-width">
+                                        <tr>
+                                            <th></th>
+                                            <th><span>文件名称</span></th>
+                                            <th><span>操作</span></th>
+                                            <th><span>测试结果</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="collapsing">
+                                                <div class="ui toggle checkbox">
+                                                    <input type="checkbox"> <label></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span>auto.js</span>
+                                            </td>
+                                            <td>
+                                                <div class="ui icon button basic tiny">
+                                                    <i class="icon unhide"></i>
+                                                    <span>预览</span>
+                                                </div>
+                                                <div class="ui icon button basic tiny">
+                                                    <i class="icon copy"></i>
+                                                    <span>复制文件地址</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a class="ui green label">
+                                                    <span>成功生成html文件（点击复制地址）</span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="collapsing">
+                                                <div class="ui toggle checkbox">
+                                                    <input type="checkbox"> <label></label>
+                                                </div>
+                                            </td>
+                                            <td>auto.js</td>
+                                            <td>
+                                                <div class="ui icon button basic tiny">
+                                                    <i class="icon unhide"></i>
+                                                    <span>预览</span>
+                                                </div>
+                                                <div class="ui icon button basic tiny">
+                                                    <i class="icon copy"></i>
+                                                    <span>复制文件地址</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a class="ui red label">
+                                                    <span>生成html失败</span>
+                                                </a>
+                                            </td>
+                                        </tr>                                    
+                                    </tbody>
+                                    <tfoot class="full-width">
+                                        <tr>
+                                            <th></th>
+                                            <th colspan="3">
+                                                <div class="ui right floated small primary button">
+                                                    <span>进行测试</span>
+                                                </div>
+                                                <div class="ui small button">
+                                                    <span>添加测试脚本</span>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>                                
                             </div>
                         </div>
                         <div class="ui bottom attached tab segment" data-tab="second">
@@ -103,7 +170,7 @@
                     console.log(value, text, $choice);
                 }
             });
-            $('.ui.modal').modal('show');
+            // $('.ui.modal').modal('show');
         </script>
    </body>
 </html>
