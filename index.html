@@ -41,11 +41,77 @@
                 <div class="column">
                     <div id="container">
                         <div class="ui top attached tabular menu">
-                            <a class="active item" data-tab="first"><span>测试旧模板</span></a>
+                            <a class="active item" data-tab="config"><span>管理Render Server配置</span> </a>
+                            <a class="item" data-tab="manage"><span>管理模板</span></a>
+                            <a class="item" data-tab="first"><span>测试旧模板</span></a>
                             <a class="item" data-tab="second">Second</a>
-                            <a class="item" data-tab="third">Third</a>
+                            <a class="item" data-tab="third"><span>分析Log</span></a>
                         </div>
-                        <div class="ui bottom attached active tab segment" data-tab="first">
+                        <div class="ui bottom attached tab segment active" data-tab="config">
+                            <div class="ui form">
+                                <div class="ui segment">
+                                    <div class="field">
+                                      <div class="ui toggle checkbox">
+                                        <input type="checkbox" checked="" disabled="" name="gift" tabindex="0" class="hidden">
+                                        <label>Render Server运行中</label>
+                                      </div>
+                                    </div>
+                                </div>                            
+                                <div class="inline field">
+                                    <label>Render Server目录</label>
+                                    <input type="text" name="">
+                                </div>  
+                                <div class="inline field">
+                                    <label>Production目录</label>
+                                    <div class="ui toggle checkbox">
+                                        <label>Render Server运行中</label>
+                                        <input type="checkbox" checked="" name="gift" tabindex="0" class="hidden">
+                                    </div>
+                                    <div class="ui left pointing label">
+                                        <span>你好</span>
+                                    </div>
+                                </div>  
+                                <div class="inline field">
+                                    <label>端口号</label>
+                                    <input type="text" name="">
+                                    <div class="ui left pointing label">
+                                        <span>你好</span>
+                                    </div>
+                                </div>
+                                <div class="inline field">
+                                    <label>数据库名称</label>
+                                    <input type="text" name="">
+                                </div>                           
+                                <div class="inline field">
+                                    <label>数据库账户名称</label>
+                                    <input type="text" name="">
+                                </div>
+                                <div class="inline field">
+                                    <label>数据库密码</label>
+                                    <input type="text" name="">
+                                </div>
+                                <div class="inline field">
+                                    <label>数据库端口号</label>
+                                    <input type="text" name="">
+                                </div>
+                                <div class="field"><br></div>
+                                <div class="inline field">
+                                    <button class="ui button primary">
+                                        <span>保存</span>
+                                    </button>
+                                    <button class="ui button basic">
+                                        <span>还原</span>
+                                    </button>
+                                    <button class="ui button basic">
+                                        <span>还原为默认值</span>
+                                    </button>
+                                </div>                           
+                            </div>
+                        </div>                        
+                        <div class="ui bottom attached tab segment" data-tab="manage">
+                            Second
+                        </div>                        
+                        <div class="ui bottom attached tab segment" data-tab="first">
                             <div class="ui form">
                                 <div class="inline fields">
                                     <div class="field">
@@ -76,7 +142,7 @@
                                 <p><span>模板所属测试数据</span></p>
                                 <label>暂无测试数据</label>
                                 <button class="ui button basic small">
-                                    <span>添加测试数据</span>
+                                    <span>自动生成测试数据</span>
                                 </button>
                                 <table class="ui compact celled definition table">
                                     <thead class="full-width">
