@@ -7,6 +7,7 @@
         <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
         <script type="text/javascript" src="./bower_components/semantic/dist/semantic.min.js"></script>
         <script type="text/javascript"  src="./bower_components/prism/prism.js"></script>
+        <script type="text/javascript" src="./bower_components/vue/dist/vue.min.js"></script>
         <style type="text/css">
             label, span, button, div {
                 font-family: "思源黑体", "Source Han Sans", "微软雅黑", "Microsoft YaHei" !important;
@@ -42,15 +43,15 @@
                     <div id="container">
                         <div class="ui top attached tabular menu">
                             <a class="item" data-tab="config"><span>管理Render Server配置</span> </a>
-                            <a class="item" data-tab="add"><span>添加模板</span></a>
                             <a class="active item" data-tab="manage"><span>管理模板</span></a>
+                            <a class="item" data-tab="insert"><span>添加模板</span></a>
                             <a class="item" data-tab="first"><span>测试旧模板</span></a>
                             <a class="item" data-tab="second">Second</a>
                             <a class="item" data-tab="third"><span>分析Log</span></a>
                         </div>
                         <div class="ui bottom attached tab segment" data-tab="config">
-                            <div class="ui form">
-                                <div class="ui positive message icon">
+                            <div class="ui form panel-config">
+                                <div class="ui positive message icon" v-show="rs.isRunning">
                                     <i class="icon smile"></i>
                                     <div class="content">
                                         <div class="header">
@@ -59,7 +60,7 @@
                                         <p><span>检测到端口8124被占用</span></p>
                                     </div>
                                 </div>
-                                <div class="ui negative message icon">
+                                <div class="ui negative message icon" v-show="!rs.isRunning">
                                     <i class="icon frown"></i>
                                     <div class="content">
                                         <div class="header">
@@ -70,7 +71,7 @@
                                 </div>
                                 <div class="inline field">
                                     <label>Render Server目录</label>
-                                    <input type="text" name="">
+                                    <input type="text" v-model="rs.absoluteDirectoryPath">
                                     <button class="ui button basic icon">
                                         <i class="icon copy"></i>
                                         <span>复制完整目录路径</span>
@@ -79,7 +80,7 @@
                                 <div class="inline field">
                                     <label>Production目录</label>
                                     <div class="ui toggle checkbox">
-                                        <input type="checkbox">
+                                        <input type="checkbox" v-model="rs.isProduction">
                                         <label><br></label>
                                     </div>
                                     <!-- <div class="ui left pointing label">
@@ -88,30 +89,30 @@
                                 </div>  
                                 <div class="inline field">
                                     <label>端口号</label>
-                                    <input type="text" name="">
+                                    <input type="text" v-model="db.port">
                                     <!-- <div class="ui left pointing label">
                                         <span>你好</span>
                                     </div> -->
                                 </div>
                                 <div class="inline field">
                                     <label>数据库名称</label>
-                                    <input type="text" name="">
+                                    <input type="text" v-model="db.name">
                                 </div>                           
                                 <div class="inline field">
                                     <label>数据库账户名称</label>
-                                    <input type="text" name="">
+                                    <input type="text" v-model="db.account">
                                 </div>
                                 <div class="inline field">
                                     <label>数据库密码</label>
-                                    <input type="text" name="">
+                                    <input type="text" v-model="db.password">
                                 </div>
                                 <div class="inline field">
                                     <label>数据库端口号</label>
-                                    <input type="text" name="">
+                                    <input type="text" v-model="db.port">
                                 </div>
                                 <div class="field"><br></div>
                                 <div class="inline field">
-                                    <button class="ui button primary">
+                                    <button v-on:click="saveChanges" class="ui button primary">
                                         <span>保存</span>
                                     </button>
                                     <button class="ui button basic">
@@ -123,7 +124,88 @@
                                 </div>                           
                             </div>
                         </div>
-                        <div class="ui bottom attached tab segment" data-tab="add">
+                        <div class="ui bottom attached tab segment active" data-tab="manage">
+                            <div class="ui form panel-manage">
+                                <div class="inline fields">
+                                    <div class="field">
+                                        <label>搜索模板名</label>
+                                        <input type="text" name="">
+                                    </div>
+                                    <div class="field">
+                                        <label>筛选问题模板</label>
+                                        <select class="ui dropdown">
+                                            <option ><span>无</span></option>
+                                            <option ><span>未同步至Production</span></option>
+                                            <option ><span>缺少测试数据</span></option>
+                                            <option ><span>内容有差异</span></option>
+                                        </select>
+                                    </div>
+                                    
+                                </div>
+                                <div class="inline fields">
+                                </div>
+                                <table class="ui compact celled striped table">
+                                    <thead class="full-width">
+                                        <tr>
+                                            <th><span>模板名称</span></th>
+                                            <th><span>状态</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <i class="folder icon"></i> node_modules
+                                            </td>
+                                            <td class="collapsing">
+                                                <label class="ui label basic">
+                                                    <i class="checkmark icon"></i>
+                                                    <span>正常</span>
+                                                </label>
+                                                <label class="ui label red">
+                                                    <i class="refresh icon"></i>
+                                                    <span>未同步</span>
+                                                </label>
+                                                <label class="ui label orange">
+                                                    <i class="warning icon"></i>
+                                                    <span>缺少测试数据</span>
+                                                </label>
+                                                <label class="ui label gray">
+                                                    <i class="help icon"></i>
+                                                    <span>内容有差异</span>
+                                                </label>                                            
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <i class="folder icon"></i> node_modules
+                                            </td>
+                                            <td>
+                                            </td>
+                                        </tr>                
+                                    </tbody>
+                                    <tfoot class="full-width">
+                                        <tr>
+                                            <th colspan="2">
+                                                <button class="ui button basic">添加模板</button>
+                                                <div class="ui right floated pagination menu">
+                                                    <a class="icon item">
+                                                        <i class="left chevron icon"></i>
+                                                    </a>
+                                                    <a class="item">1</a>
+                                                    <a class="item">2</a>
+                                                    <a class="item">3</a>
+                                                    <a class="item">4</a>
+                                                    <a class="icon item">
+                                                        <i class="right chevron icon"></i>
+                                                    </a>
+                                                </div>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table> 
+                            </div>
+                        </div>                        
+                        <div class="ui bottom attached tab segment" data-tab="insert">
                             <div class="ui form">
                                 <div class="fields">
                                     <div class="twelve wide field">
@@ -132,13 +214,13 @@
                                             <div class="six wide field">
                                                 <div class="ui radio checkbox">
                                                 <input type="radio" name="frequency" checked="checked">
-                                                <label>旧模板(src/rs/template 目录)</label>
+                                                <label>旧模板( src/rs/template 目录)</label>
                                                 </div>
                                             </div>
                                             <div class="six wide field">
                                                 <div class="ui radio checkbox">
                                                 <input type="radio" name="frequency">
-                                                <label>新模板(cache/template 目录)</label>
+                                                <label>新模板( cache/template 目录)</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -164,125 +246,19 @@
                                         <button class="ui button basic"><span>查看现有styleType</span></button>
                                     </div>                                
                                 </div>
-                                <div class="field">
-                                    <label>其他选项</label>
-                                </div>
-                                <div class="grouped fields">
-                                    <div class="field">
-                                        <div class="ui checkbox disabled">
-                                            <input type="checkbox" checked="">
-                                            <label>将styleType同步至所有的rs.proto文件</label>
-                                        </div>
+                                <div class="ui info message">
+                                    <div class="header">
+                                        <span>注意</span>
                                     </div>
-                                    <div class="field">
-                                        <div class="ui checkbox disabled">
-                                            <input type="checkbox" checked="">
-                                            <label>添加request测试数据</label>
-                                        </div>
-                                    </div>
+                                    <ul class="list">
+                                        <li>styleType信息同时添加进了两个rs.proto文件中</li>
+                                        <li>模板文件夹中自动生成了request文件夹</li>
+                                    </ul>
                                 </div>
                                 <button class="ui button primary">
                                     确定
                                 </button>
                             </div>
-                        </div>
-                        <div class="ui bottom attached tab segment active" data-tab="manage">
-                            <div class="ui form">
-                                <div class="inline field">
-                                    <label>搜索模板名</label>
-                                    <input type="text" name="">
-                                </div>
-                                <div class="inline fields">
-                                    <label>找到</label>
-                                    <div class="field">
-                                        <div class="ui checkbox">
-                                            <input type="checkbox" name="">
-                                            <label>尚未同步至Production</label>
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="ui checkbox">
-                                            <input type="checkbox" name="">
-                                            <label>无测试数据的</label>
-                                        </div>
-                                    </div>                                   
-                                    <div class="field">
-                                        <div class="ui checkbox">
-                                            <input type="checkbox" name="">
-                                            <label>内容有差异</label>
-                                        </div>
-                                    </div>                                    
-                                </div>
-                                <div class="inline fields">
-                                    <div class="field">
-                                        <label>每页展示</label>
-                                        <select class="ui dropdown">
-                                            <option value=""><span>8条</span></option>
-                                            <option value="1"><span>8条</span></option>
-                                            <option value="0"><span>全部</span></option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <table class="ui compact celled striped table">
-                                <thead class="full-width">
-                                    <tr>
-                                        <th><span>模板名称</span></th>
-                                        <th><span>状态</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <i class="folder icon"></i> node_modules
-                                        </td>
-                                        <td class="collapsing">
-                                            <label class="ui label basic">
-                                                <i class="checkmark icon"></i>
-                                                <span>正常</span>
-                                            </label>
-                                            <label class="ui label red">
-                                                <i class="refresh icon"></i>
-                                                <span>未同步</span>
-                                            </label>
-                                            <label class="ui label orange">
-                                                <i class="warning icon"></i>
-                                                <span>缺少测试数据</span>
-                                            </label>
-                                            <label class="ui label gray">
-                                                <i class="help icon"></i>
-                                                <span>内容有差异</span>
-                                            </label>                                            
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <i class="folder icon"></i> node_modules
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>                
-                                </tbody>
-                                <tfoot class="full-width">
-                                    <tr>
-                                        <th colspan="2">
-                                            <button class="ui button basic">添加模板</button>
-                                            <div class="ui right floated pagination menu">
-                                                <a class="icon item">
-                                                    <i class="left chevron icon"></i>
-                                                </a>
-                                                <a class="item">1</a>
-                                                <a class="item">2</a>
-                                                <a class="item">3</a>
-                                                <a class="item">4</a>
-                                                <a class="icon item">
-                                                    <i class="right chevron icon"></i>
-                                                </a>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </tfoot>
-                            </table> 
                         </div>
                         <div class="ui bottom attached tab segment" data-tab="first">
                             <div class="ui form">
@@ -403,13 +379,63 @@
             </div>    
         </div>
         <script type="text/javascript">
+
+            new Vue({
+                el: '.panel-manage',
+                data: {
+                    tpls: [
+                        {
+                            name: '',
+                            states: [
+                                
+                            ]
+                        }
+                    ]
+                },
+                methods: {
+
+                }
+            })
+
+            new Vue({
+                el: '.panel-config',
+                data: {
+                    rs: {
+                        isRunning: false,
+                        directoryName: 'render-server',
+                        absoluteDirectoryPath: './',
+                        relativeDirectoryPath: './',
+                        isProduction: false,
+                        serverPot: 8124   
+                    },
+                    db: {
+                        name: 'nova_ts',
+                        port: 8877,
+                        host: '10.1.1.1',
+                        account: 'root',
+                        password: '123456'
+                    }
+                },
+                methods: {
+                    saveChanges: function () {
+                        console.log(this.rs);
+                        console.log(this.rs.isProduction);
+                        console.log('Change Saved');
+                    },
+                    rollback: function () {
+
+                    }
+                }
+            });
+
+            // $('.ui.modal').modal('show');
             $('.menu .item').tab();
             $('.dropdown').dropdown({
                 onChange: function (value, text, $choice) {
                     console.log(value, text, $choice);
                 }
             });
-            // $('.ui.modal').modal('show');
+
         </script>
    </body>
 </html>
