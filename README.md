@@ -1,3 +1,9 @@
+# 目前需要解决的问题：
+
+- 如何diff出修改的地方？
+	- 参考 virtual dom tree？
+- 如何表示修改的地方并且告诉服务端？
+
 # 设计思路(Event sourcing + virtual dom algo + bigpipe/pjax)
 
 ## 前沿
