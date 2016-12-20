@@ -5,6 +5,57 @@
 	<script type="text/javascript" src="../bower_components/vue/dist/vue.min.js"></script>
 </head>
 <body>
+<div id="container">
+	<input v-model="todos.key1" type="text" name="">
+	<input v-model="todos.key2" type="text" name="">
+	<input v-model="todos.key3" type="text" name="">
+	<input v-model="todos.key4" type="text" name="">
+	<input v-model="todos.key5" type="text" name="">
+	<button v-on:click="save">Save</button>
+</div>
+<script type="text/javascript">
+	var Stroage = {
+		save: function (todos) {
+		}
+	}
 
+	var app = new Vue({
+		el: '#container',
+		data: {
+			todos: {
+				key1: 'value1',
+				key2: 'value2',
+				key3: 'value3',
+				key4: 'value4',
+				key5: 'value5'
+			}
+		},
+		watch: {
+			todos: {
+				deep: true,
+				handler: function (newTodos) {
+					debugger
+					// Stroage.save(newTodos);
+				}
+			}
+		},
+		methods: {
+			save: function () {
+				var temp = this;
+				console.log(this.todos);
+				console.log(this.arr);
+			}
+		}
+	});
+
+	app.$set(app.$data, 'todos', {
+		key1: 'value10',
+		key2: 'value20',
+		key3: 'value30',
+		key4: 'value40',
+		key5: 'value50'
+	})
+
+</script>
 </body>
 </html>
