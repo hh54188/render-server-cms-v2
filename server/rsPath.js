@@ -17,6 +17,7 @@ var isProduction = false;
 
 // 默认该预览工具文件夹会和render-server放在同一级别（将来也可以支持用户自由配置）
 var RS_ROOT = path.resolve(path.join('.', '..', 'render-server', (isProduction? 'production': '')));
+var RS_SRC = path.resolve(path.join(RS_ROOT, 'src'));
 var RS_CLASSIC_TEMPLATE = path.resolve(path.join(RS_ROOT, 'src', 'rs', 'template'));
 
 var RS_STANDARDIZE_CACHE = path.resolve(path.join(RS_ROOT, 'cache'));
@@ -85,6 +86,9 @@ module.exports = {
 	},
 	getRSRootPath: function () {
 		return RS_ROOT;
+	},
+	getSrcPath: function () {
+		return RS_SRC;
 	},
 	Classic: {
 		getTemplateRootPath: function () {
