@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="../bower_components/deep-diff/releases/deep-diff-0.3.3.min.js"></script>
+	<script type="text/javascript" src="../bower_components/jsdiff/diff.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+	function plantTree(count) {
+		count--
+		if (count !== 1 ){
+			return  {
+				left: plantTree(count),
+				right: plantTree(count)
+			}			
+		} else {
+			return Math.random();
+		}
+	}
+
+	var root1 = plantTree(10);
+	var root2 = plantTree(10);
+
+	var start = performance.now();
+	var differences = DeepDiff.diff(root1, root2);
+	console.log(performance.now() - start);
+	console.log(differences);
+</script>
+</body>
+</html>
