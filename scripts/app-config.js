@@ -15,27 +15,68 @@ Vue.directive('disable', function (el, binding, vnode) {
 
 var remote = {
     _data: {
-            rs: {
-                isRunning: false,
-                directoryName: 'render-server',
-                absoluteDirectoryPath: './',
-                relativeDirectoryPath: './',
-                isProduction: false,
-                port: 8124   
-            },
-            db: {
-                name: 'nova_ts',
-                port: 8877,
-                host: '10.1.1.1',
-                account: 'root',
-                password: '123456'
-            }
+        rs: {
+            isRunning: false,
+            directoryName: 'render-server',
+            absoluteDirectoryPath: './',
+            relativeDirectoryPath: './',
+            isProduction: false,
+            port: 8124   
+        },
+        db: {
+            name: 'nova_ts',
+            port: 8877,
+            host: '10.1.1.1',
+            account: 'root',
+            password: '123456'
+        }
     },
     fetch: function () {
-        return this._data;
+        // 深度Object克隆
+        // return jQuery.extend(true, {}, this._data);
+        return JSON.parse(JSON.stringify(this._data));
+    },
+    isObject: function (o) {
+        if (Object.prototype.toString.call(o) === '[object Object]') {
+            return true;
+        }
+        return false;
+    },
+    isLeafNode: function (node) {
+        if (!this.isObject(node)) {
+            return true;
+        }
+        return false;
+    },
+    abstractLeaf: function (pathArr, node, collection) {
+        if (!this.isLeafNode(node)) {
+            for (var key in node) {
+                var tempArr = pathArr.slice();
+                tempArr.push(key);
+                this.abstractLeaf(tempArr, node[key], collection);
+            }
+        } else {
+            collection.push({
+                path: pathArr.join('.'),
+                value: node
+            });
+        }
     },
     diff: function (newData) {
-
+        var oldIndex = []
+        this.abstractLeaf([], this._data, oldIndex);
+        oldIndex.forEach(function (oldItem) {
+            var path = oldItem.path;
+            var oldValue = oldItem.value;
+            var newValue = newData;
+            path.split('.').forEach(function (segment) {
+                newValue = newValue[segment];
+            });
+            if (oldValue !== newValue) {
+                console.log(path, oldValue, newValue);
+            }
+            // console.log(path);
+        })
     }
 }
 
@@ -136,7 +177,7 @@ new Vue({
             return passed;
         },
         saveChanges: function () {
-
+            remote.diff(this.config);
         }
     }
 });

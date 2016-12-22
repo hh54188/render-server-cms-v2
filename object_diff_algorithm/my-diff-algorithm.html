@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script type="text/javascript">
+	function plantTree(count) {
+		count--
+		if (count !== 1 ){
+			return  {
+				left: plantTree(count),
+				right: plantTree(count)
+			}			
+		} else {
+			return Math.random();
+		}
+	}
+
+	function isObject(o) {
+        if (Object.prototype.toString.call(o) === '[object Object]') {
+            return true;
+        }
+        return false;
+    }
+
+    function isLeafNode(node) {
+        if (!isObject(node)) {
+            return true;
+        }
+        return false;
+    }
+
+    var index = [];
+    function abstractLeaf(pathArr, node) {
+        if (!isLeafNode(node)) {
+            for (var key in node) {
+                var tempArr = pathArr.slice();
+                tempArr.push(key);
+                abstractLeaf(tempArr, node[key]);
+            }
+        } else {
+            index.push({
+                path: pathArr.join('.'),
+                value: node
+            });
+        }
+    }
+
+	var root = plantTree(8);
+	abstractLeaf([], root);
+	index.forEach(function (item) {
+		console.log(JSON.stringify(item));
+	})
+</script>
+</body>
+</html>
