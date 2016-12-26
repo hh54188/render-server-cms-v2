@@ -32,14 +32,22 @@ function inheritUIStateBase() {
     return extendClass(UI_STATE_BASE)
 }
 
+function deepCloneData(oldData) {
+    return JSON.parse(JSON.stringify(oldData));
+}
+
 new Vue({
     el: '.panel-config',
     data: {
-        BusinessState: remote.fetch(),
-        // 当用户修改数据时需要对修改后的数据进行验证是否合法
-        // 所以视图上除了展现业务逻辑数据以外还需要展现“提示信息”
-        // validation对象结构的与业务数据config中一致
-        // 这样一来每当找到一条验证规则便能找到一条对应的数据
+        // old 表示旧数据、修改之前的数据
+        // 数据修改之后，需要通过对比旧数据找出修改的地方
+        // 当用户保存之后，旧数据再次与当前修改之后的数据同步
+        BusinessStateOld: remote.fetch(),
+        BusinessState: deepCloneData(remote.fetch()),
+        // 页面上除了要展示的业务数据外，还友一类数据称之为界面状态
+        // 比如提示输入是否合法，提示信息是什么，输入框可不可用
+        // 如果页面组件化之后，这些逻辑应该交由交互逻辑和组件自己处理，
+        // 但是在这个1.0版本中还是由同一个instance处理吧
         UIState:{
             rs: {
                 port: inheritUIStateBase()
@@ -50,8 +58,14 @@ new Vue({
                 host: inheritUIStateBase(),
                 account: inheritUIStateBase(),
                 password: inheritUIStateBase()
-            }
+            },
+            isLoading: false,
+            validatePass: true
         },
+        // 当用户修改数据时需要对修改后的数据进行验证是否合法
+        // 所以视图上除了展现业务逻辑数据以外还需要展现“提示信息”
+        // validation对象结构的与业务数据config中一致
+        // 这样一来每当找到一条验证规则便能找到一条对应的数据        
         validateRules: {
             rs: {
                 port: {
@@ -85,8 +99,21 @@ new Vue({
     watch: {
         BusinessState: {
             deep: true,
-            handler: function (newData) {
-                this.validate(newData);
+            handler: function () {
+                // 数据被改变之后
+                // 检测数据是否合法
+                // 如果不合法的话“保存按钮”也是不可用的
+                this.validate();
+                if (this.UIState.validatePass) {
+                    // 如果用户修改之后的数据是合法的
+                    // 找出修改的地方
+                    debugger
+                    var diff = diffService.diff(
+                        this.BusinessStateOld, 
+                        this.BusinessState
+                    );
+                    console.log(diff);
+                }
             }
         }
     },
@@ -95,6 +122,7 @@ new Vue({
             var UIState = this.UIState;
             var newData = this.BusinessState;
             var validateRules = this.validateRules;
+            var validatePassLocal = true;
 
             // rs还是db类
             for (var categoryName in validateRules) {
@@ -124,13 +152,17 @@ new Vue({
                     // 如果不可为空又实际为空，报错
                     if (required && !value) {
                         UIStateField.message = REQUIRED_INFO;
+                        validatePassLocal = false;
                     }
                         
                     if (rule && !rule.test(value)) {
                         UIStateField.message = ERROR_INFO;
+                        validatePassLocal = false;
                     }
                 }
             }
+
+            this.UIState.validatePass = validatePassLocal;
         },
         checkValidateIsPass: function () {
             var passed = true;
@@ -146,8 +178,46 @@ new Vue({
             }
             return passed;
         },
+        dataIndeedChanged: function () {
+            // var diffResults = diffService.diff()
+        },
         saveChanges: function () {
+            /*
+                CommandManagerService.command({
+                    name: 'save_config',
+                    payload: [
+                        [{
+                            path: ,
+                            newValue: ,
+                        }]
+                    ]
+                });
 
+                -----
+
+                SaveConfigCommandBus.handle = function (diff) {
+                    try {
+                        diff.forEach(function (diffItem) {
+                            var path = diffItem.path;
+                            var newValue = diffItem.newValue;
+
+                            var oldValue;
+                            path.split('.').forEach(function (segment) {
+                                oldValue = oldValue[segment];
+                            });
+                            oldValue = newValue;
+                            
+                            CommandManagerService.command({
+                                name: 'save_config_success'
+                            });
+                        });
+                    } catch(e) {
+                        CommandManagerService.command({
+                            name: 'save_config_failed'
+                        });        
+                    }
+                }
+             */
         }
     }
 });

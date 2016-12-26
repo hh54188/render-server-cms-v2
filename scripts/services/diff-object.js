@@ -43,14 +43,19 @@ function diff(oldObject, newObject) {
         if (oldValue !== newValue) {
         	result.push({
         		path: path,
-        		old: oldValue,
-        		new: newValue
+        		newValue: newValue
         	});
         }
     });
 
     return result;
 }
+
+var diffService = (function () {
+    return {
+        diff: diff
+    }
+})();
 
 /*
     function plantTree(count) {

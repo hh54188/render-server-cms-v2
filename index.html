@@ -121,7 +121,7 @@
                                 </div>
                                 <div class="field"><br></div>
                                 <div class="inline field">
-                                    <button v-disable="!checkValidateIsPass()" v-on:click="saveChanges" class="ui button primary">
+                                    <button v-disable="!UIState.validatePass" v-on:click="saveChanges" class="ui button primary">
                                         <span>保存</span>
                                     </button>
                                     <button class="ui button basic floated right">
