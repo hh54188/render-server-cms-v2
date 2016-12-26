@@ -51,7 +51,7 @@
                         </div>
                         <div class="ui bottom attached tab segment active" data-tab="config">
                             <div class="ui form panel-config">
-                                <div class="ui positive message icon" v-show="config.rs.isRunning">
+                                <div class="ui positive message icon" v-show="BusinessState.rs.isRunning">
                                     <i class="icon smile"></i>
                                     <div class="content">
                                         <div class="header">
@@ -60,7 +60,7 @@
                                         <p><span>检测到端口8124被占用</span></p>
                                     </div>
                                 </div>
-                                <div class="ui negative message icon" v-show="!config.rs.isRunning">
+                                <div class="ui negative message icon" v-show="!BusinessState.rs.isRunning">
                                     <i class="icon frown"></i>
                                     <div class="content">
                                         <div class="header">
@@ -71,7 +71,7 @@
                                 </div>
                                 <div class="inline field">
                                     <label>Render Server目录</label>
-                                    <input type="text" v-model="config.rs.absoluteDirectoryPath">
+                                    <input type="text" v-model="BusinessState.rs.absoluteDirectoryPath">
                                     <button class="ui button basic icon">
                                         <i class="icon copy"></i>
                                         <span>复制完整目录路径</span>
@@ -80,43 +80,43 @@
                                 <div class="inline field">
                                     <label>Production目录</label>
                                     <div class="ui toggle checkbox">
-                                        <input type="checkbox" v-model="config.rs.isProduction">
+                                        <input type="checkbox" v-model="BusinessState.rs.isProduction">
                                         <label><br></label>
                                     </div>
                                 </div>  
                                 <div class="inline field">
                                     <label>端口号</label>
-                                    <input type="text" v-model="config.rs.port">
-                                    <div v-show="validation.rs.port.result" class="ui left pointing label">
-                                        <span>{{validation.rs.port.result}}</span>
+                                    <input type="text" v-model="BusinessState.rs.port">
+                                    <div v-show="UIState.rs.port.message" class="ui left pointing label">
+                                        <span>{{UIState.rs.port.message}}</span>
                                     </div>
                                 </div>
                                 <div class="inline field">
                                     <label>数据库名称</label>
-                                    <input type="text" v-model="config.db.name">
-                                    <div v-show="validation.db.name.result" class="ui left pointing label">
-                                        <span>{{validation.db.name.result}}</span>
+                                    <input type="text" v-model="BusinessState.db.name">
+                                    <div v-show="UIState.db.name.message" class="ui left pointing label">
+                                        <span>{{UIState.db.name.message}}</span>
                                     </div>
                                 </div>                           
                                 <div class="inline field">
                                     <label>数据库账户名称</label>
-                                    <input type="text" v-model="config.db.account">
-                                    <div v-show="validation.db.account.result" class="ui left pointing label">
-                                        <span>{{validation.db.account.result}}</span>
+                                    <input type="text" v-model="BusinessState.db.account">
+                                    <div v-show="UIState.db.account.message" class="ui left pointing label">
+                                        <span>{{UIState.db.account.message}}</span>
                                     </div>                                    
                                 </div>
                                 <div class="inline field">
                                     <label>数据库密码</label>
-                                    <input type="text" v-model="config.db.password">
-                                    <div v-show="validation.db.password.result" class="ui left pointing label">
-                                        <span>{{validation.db.password.result}}</span>
+                                    <input type="text" v-model="BusinessState.db.password">
+                                    <div v-show="UIState.db.password.message" class="ui left pointing label">
+                                        <span>{{UIState.db.password.message}}</span>
                                     </div>                                    
                                 </div>
                                 <div class="inline field">
                                     <label>数据库端口号</label>
-                                    <input type="text" v-model="config.db.port">
-                                    <div v-show="validation.db.port.result" class="ui left pointing label">
-                                        <span>{{validation.db.port.result}}</span>
+                                    <input type="text" v-model="BusinessState.db.port">
+                                    <div v-show="UIState.db.port.message" class="ui left pointing label">
+                                        <span>{{UIState.db.port.message}}</span>
                                     </div>                                    
                                 </div>
                                 <div class="field"><br></div>
