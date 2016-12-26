@@ -1,0 +1,26 @@
+{
+  "name": "render-server-cms-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "node-oojs": "^1.4.0",
+    "socket.io": "^1.7.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hh54188/render-server-cms-v2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hh54188/render-server-cms-v2/issues"
+  },
+  "homepage": "https://github.com/hh54188/render-server-cms-v2#readme"
+}

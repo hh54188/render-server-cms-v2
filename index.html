@@ -8,6 +8,7 @@
         <script type="text/javascript" src="./bower_components/semantic/dist/semantic.min.js"></script>
         <script type="text/javascript"  src="./bower_components/prism/prism.js"></script>
         <script type="text/javascript" src="./bower_components/vue/dist/vue.min.js"></script>
+        <script type="text/javascript" src="./node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.min.js"></script>
         <style type="text/css">
             label, span, button, div {
                 font-family: "思源黑体", "Source Han Sans", "微软雅黑", "Microsoft YaHei" !important;
@@ -51,7 +52,7 @@
                         </div>
                         <div class="ui bottom attached tab segment active" data-tab="config">
                             <div class="ui form panel-config">
-                                <div class="ui positive message icon" v-show="BusinessState.rs.isRunning">
+                                <div class="ui positive message icon" v-show="businessState.rs.isRunning">
                                     <i class="icon smile"></i>
                                     <div class="content">
                                         <div class="header">
@@ -60,7 +61,7 @@
                                         <p><span>检测到端口8124被占用</span></p>
                                     </div>
                                 </div>
-                                <div class="ui negative message icon" v-show="!BusinessState.rs.isRunning">
+                                <div class="ui negative message icon" v-show="!businessState.rs.isRunning">
                                     <i class="icon frown"></i>
                                     <div class="content">
                                         <div class="header">
@@ -71,7 +72,7 @@
                                 </div>
                                 <div class="inline field">
                                     <label>Render Server目录</label>
-                                    <input type="text" v-model="BusinessState.rs.absoluteDirectoryPath">
+                                    <input type="text" v-model="businessState.rs.absoluteDirectoryPath">
                                     <button class="ui button basic icon">
                                         <i class="icon copy"></i>
                                         <span>复制完整目录路径</span>
@@ -80,48 +81,48 @@
                                 <div class="inline field">
                                     <label>Production目录</label>
                                     <div class="ui toggle checkbox">
-                                        <input type="checkbox" v-model="BusinessState.rs.isProduction">
+                                        <input type="checkbox" v-model="businessState.rs.isProduction">
                                         <label><br></label>
                                     </div>
                                 </div>  
                                 <div class="inline field">
                                     <label>端口号</label>
-                                    <input type="text" v-model="BusinessState.rs.port">
+                                    <input type="text" v-model="businessState.rs.port">
                                     <div v-show="UIState.rs.port.message" class="ui left pointing label">
                                         <span>{{UIState.rs.port.message}}</span>
                                     </div>
                                 </div>
                                 <div class="inline field">
                                     <label>数据库名称</label>
-                                    <input type="text" v-model="BusinessState.db.name">
+                                    <input type="text" v-model="businessState.db.name">
                                     <div v-show="UIState.db.name.message" class="ui left pointing label">
                                         <span>{{UIState.db.name.message}}</span>
                                     </div>
                                 </div>                           
                                 <div class="inline field">
                                     <label>数据库账户名称</label>
-                                    <input type="text" v-model="BusinessState.db.account">
+                                    <input type="text" v-model="businessState.db.account">
                                     <div v-show="UIState.db.account.message" class="ui left pointing label">
                                         <span>{{UIState.db.account.message}}</span>
                                     </div>                                    
                                 </div>
                                 <div class="inline field">
                                     <label>数据库密码</label>
-                                    <input type="text" v-model="BusinessState.db.password">
+                                    <input type="text" v-model="businessState.db.password">
                                     <div v-show="UIState.db.password.message" class="ui left pointing label">
                                         <span>{{UIState.db.password.message}}</span>
                                     </div>                                    
                                 </div>
                                 <div class="inline field">
                                     <label>数据库端口号</label>
-                                    <input type="text" v-model="BusinessState.db.port">
+                                    <input type="text" v-model="businessState.db.port">
                                     <div v-show="UIState.db.port.message" class="ui left pointing label">
                                         <span>{{UIState.db.port.message}}</span>
                                     </div>                                    
                                 </div>
                                 <div class="field"><br></div>
                                 <div class="inline field">
-                                    <button v-disable="!UIState.validatePass" v-on:click="saveChanges" class="ui button primary">
+                                    <button v-disable="!UIState.validatePass || !diff" v-on:click="saveChanges" class="ui button primary">
                                         <span>保存</span>
                                     </button>
                                     <button class="ui button basic floated right">
@@ -388,7 +389,9 @@
             </div>    
         </div>
         <script type="text/javascript" src="./scripts/global.js"></script>
+        <script type="text/javascript" src="./scripts/socketio-setup.js"></script>
         <script type="text/javascript" src="./scripts/services/diff-object.js"></script>
+        <script type="text/javascript" src="./scripts/services/command-manager.js"></script>
         <script type="text/javascript" src="./scripts/vue-directive/disable.js"></script>
         <script type="text/javascript" src="./scripts/app-config.js"></script>
         <script type="text/javascript" src="./scripts/ui-setup.js"></script>

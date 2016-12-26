@@ -6,11 +6,11 @@ var remote = {
             absoluteDirectoryPath: './',
             relativeDirectoryPath: './',
             isProduction: false,
-            port: 8124   
+            port: '8124'   
         },
         db: {
             name: 'nova_ts',
-            port: 8877,
+            port: '8877',
             host: '10.1.1.1',
             account: 'root',
             password: '123456'
@@ -36,14 +36,17 @@ function deepCloneData(oldData) {
     return JSON.parse(JSON.stringify(oldData));
 }
 
-new Vue({
+var appConfig = new Vue({
     el: '.panel-config',
     data: {
         // old 表示旧数据、修改之前的数据
         // 数据修改之后，需要通过对比旧数据找出修改的地方
         // 当用户保存之后，旧数据再次与当前修改之后的数据同步
-        BusinessStateOld: remote.fetch(),
-        BusinessState: deepCloneData(remote.fetch()),
+        businessStateOld: remote.fetch(),
+        businessState: remote.fetch(),
+        // 只有修改之后才允许提交
+        // 通过 diff 判断
+        diff: null,
         // 页面上除了要展示的业务数据外，还友一类数据称之为界面状态
         // 比如提示输入是否合法，提示信息是什么，输入框可不可用
         // 如果页面组件化之后，这些逻辑应该交由交互逻辑和组件自己处理，
@@ -97,22 +100,19 @@ new Vue({
         }
     },
     watch: {
-        BusinessState: {
+        businessState: {
             deep: true,
             handler: function () {
                 // 数据被改变之后
                 // 检测数据是否合法
                 // 如果不合法的话“保存按钮”也是不可用的
-                this.validate();
-                if (this.UIState.validatePass) {
+                if (this.validate()) {
                     // 如果用户修改之后的数据是合法的
                     // 找出修改的地方
-                    debugger
-                    var diff = diffService.diff(
-                        this.BusinessStateOld, 
-                        this.BusinessState
+                    this.diff = diffService.diff(
+                        this.businessStateOld, 
+                        this.businessState
                     );
-                    console.log(diff);
                 }
             }
         }
@@ -120,7 +120,7 @@ new Vue({
     methods: {
         validate: function (newData) {
             var UIState = this.UIState;
-            var newData = this.BusinessState;
+            var newData = this.businessState;
             var validateRules = this.validateRules;
             var validatePassLocal = true;
 
@@ -163,6 +163,7 @@ new Vue({
             }
 
             this.UIState.validatePass = validatePassLocal;
+            return validatePassLocal;
         },
         checkValidateIsPass: function () {
             var passed = true;
@@ -178,10 +179,16 @@ new Vue({
             }
             return passed;
         },
-        dataIndeedChanged: function () {
-            // var diffResults = diffService.diff()
-        },
         saveChanges: function () {
+            // 保存设置（同步数据）分两个步骤
+            // 1. 首先更新本地的数据
+            this.businessStateOld = JSON.parse(JSON.stringify(this.businessState));
+            this.diff = null;
+            // 2. 然后更新线上数据
+            CommandManagerService.command({
+                name: 'save_config',
+                payload: [diff]
+            });
             /*
                 CommandManagerService.command({
                     name: 'save_config',
