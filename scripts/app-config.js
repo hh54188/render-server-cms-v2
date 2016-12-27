@@ -183,12 +183,12 @@ var appConfig = new Vue({
             // 保存设置（同步数据）分两个步骤
             // 1. 首先更新本地的数据
             this.businessStateOld = JSON.parse(JSON.stringify(this.businessState));
-            this.diff = null;
             // 2. 然后更新线上数据
             CommandManagerService.command({
                 name: 'save_config',
-                payload: [diff]
+                payload: [this.diff]
             });
+            this.diff = null;
             /*
                 CommandManagerService.command({
                     name: 'save_config',

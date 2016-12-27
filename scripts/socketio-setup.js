@@ -1,13 +1,13 @@
-;(function (global) {
+;(function () {
 	if (!io) {
 		return;
 	}
 
-	io.connect('http://127.0.0.1', function (socket) {
-		global.socket = socket;
-		socket.on('message', function () {
+	var socket = null;
 
-		});
+	PubSub.subscribe('command', function (eventName, data) {
+		socket.emit('command', data);
 	});
 
-})(this);
+	socket = io.connect('http://127.0.0.1');
+})();

@@ -13,10 +13,11 @@ function checkPathIsAvailable(path) {
 
 var REQUEST_FOLDER_NAME = 'request';
 var CREATIVE_JS_NAME = 'creative.js';
+var RENDER_SERVER_DIRNAME = 'render-server';
 var isProduction = false;
 
 // 默认该预览工具文件夹会和render-server放在同一级别（将来也可以支持用户自由配置）
-var RS_ROOT = path.resolve(path.join('.', '..', 'render-server', (isProduction? 'production': '')));
+var RS_ROOT = path.resolve(path.join('.', '..', RENDER_SERVER_DIRNAME, (isProduction? 'production': '')));
 var RS_SRC = path.resolve(path.join(RS_ROOT, 'src'));
 var RS_CLASSIC_TEMPLATE = path.resolve(path.join(RS_ROOT, 'src', 'rs', 'template'));
 
@@ -78,8 +79,14 @@ function getStandardizeCreativePath(templateName) {
 }
 
 module.exports = {
+	getRenderServerDirName () {
+		return RENDER_SERVER_DIRNAME;
+	},
 	getConfigFilePath: function () {
 		return path.join(RS_ROOT, 'src', 'rs', 'common', 'config', 'global.js');
+	},
+	checkIsProduction: function () {
+		return isProduction;
 	},
 	enbaleProduction: function () {
 		isProduction = true;
