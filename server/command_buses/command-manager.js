@@ -1,22 +1,22 @@
-var SaveConfigCommandBus = require('./save-config.js');
+var UpdateConfigCommandBus = require('./update-config.js');
+var GetConfigCommandBus = require('./get-config.js');
 
-function saveConfigCommandBus(diff) {
-	console.log(diff);
-}
-
-function route(commandInfo) {
+function router(commandInfo) {
 	var commandName = commandInfo.name;
 	var payload = commandInfo.payload;
 	
 	switch(commandName) {
-		case 'save_config': 
-			SaveConfigCommandBus.handle.apply(this, payload);
+		case 'update_config': 
+			UpdateConfigCommandBus.handle.apply(this, payload);
+			break;
+		case 'get_config':
+			GetConfigCommandBus.handle.apply(this, payload);
 			break;
 	}
 }
 
 module.exports = {
 	process: function (commandInfo) {
-		route(commandInfo);
+		router(commandInfo);
 	}
 }

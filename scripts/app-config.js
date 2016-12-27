@@ -185,46 +185,10 @@ var appConfig = new Vue({
             this.businessStateOld = JSON.parse(JSON.stringify(this.businessState));
             // 2. 然后更新线上数据
             CommandManagerService.command({
-                name: 'save_config',
+                name: 'update_config',
                 payload: [this.diff]
             });
             this.diff = null;
-            /*
-                CommandManagerService.command({
-                    name: 'save_config',
-                    payload: [
-                        [{
-                            path: ,
-                            newValue: ,
-                        }]
-                    ]
-                });
-
-                -----
-
-                SaveConfigCommandBus.handle = function (diff) {
-                    try {
-                        diff.forEach(function (diffItem) {
-                            var path = diffItem.path;
-                            var newValue = diffItem.newValue;
-
-                            var oldValue;
-                            path.split('.').forEach(function (segment) {
-                                oldValue = oldValue[segment];
-                            });
-                            oldValue = newValue;
-                            
-                            CommandManagerService.command({
-                                name: 'save_config_success'
-                            });
-                        });
-                    } catch(e) {
-                        CommandManagerService.command({
-                            name: 'save_config_failed'
-                        });        
-                    }
-                }
-             */
         }
     }
 });

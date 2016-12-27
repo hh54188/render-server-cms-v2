@@ -45,6 +45,7 @@ var diffService = (function () {
             if (oldValue != newValue) {
                 result.push({
                     path: path,
+                    oldValue: oldValue,
                     newValue: newValue
                 });
             }
