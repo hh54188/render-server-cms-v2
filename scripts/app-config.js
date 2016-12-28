@@ -182,6 +182,7 @@ var appConfig = new Vue({
         saveChanges: function () {
             // 保存设置（同步数据）分两个步骤
             // 1. 首先更新本地的数据
+            // 这里有另一个选择，可以使用flux模式，数据从服务端同步
             this.businessStateOld = JSON.parse(JSON.stringify(this.businessState));
             // 2. 然后更新线上数据
             CommandManagerService.command({
@@ -192,3 +193,8 @@ var appConfig = new Vue({
         }
     }
 });
+
+// 用于更新 rs.isRunning ?
+PubSub.subscrite('state.update.config', function (eventName, data) {
+
+})

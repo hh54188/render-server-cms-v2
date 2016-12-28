@@ -1,3 +1,22 @@
+- 把 get_config_state 当作query分离出来
+
+# 设计思路(Event sourcing + virtual dom algo + bigpipe/pjax)
+
+这个应用包含很多子应用，基本上每一个tab标签就是一个子应用。可以说每一个应用都有自己的架构。所以简单来说，这个app就是我的实验室（lab），我的试验田（test field）。
+
+虽然不同的app有不同的架构，但都万变不离其宗。无非就是当下几种架构的杂糅，玩耍，尝试。不一定是架构，可能有些很好的概念或者给我启发的东西也单独拿出来做，这些内容包括Flux, Redux, State, Command Bus, Event Bus, CQRS, Event Sourcing, Virtual DOM Tree, Tree diff algothrim, Data flow, Model-View。你会发现没有MVC，因为这个东西玩的太熟也太老了，所以在这里就不玩了
+
+View层的基层框架使用的是Vue.js，这是一个MVVM框架，但它和React一样，只是一个View层的玩意。但它又和React不一样，React很明确的指出了你可以使用Flux架构。但MVVM没有告诉你你的架构应该是什么。所以开始的时候我突然发现有关业务逻辑的部分，也就是Model层应该放哪。
+
+不同的app有不同的业务场景，所以使用的架构也不同。我不敢说一定是最好，但我认为至少是适合当下的。
+
+## app-config
+
+这是一个很简单的应用，几乎没有业务逻辑，简单来说就是把一个配置选项列表，映射到一个表单中。如果对表单做了修改，则同步回文件。
+
+我不知道怎么
+
+
 
 
 ## 目前需要解决的问题：
@@ -12,8 +31,6 @@
 2. 如何构建指定节点数目的完全二叉树
 3. 设计一个实验概念机制
 4. 找到所有叶子节点的路径
-
-# 设计思路(Event sourcing + virtual dom algo + bigpipe/pjax)
 
 ## 前沿
 

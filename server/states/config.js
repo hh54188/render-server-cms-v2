@@ -1,8 +1,8 @@
-var rsPath = require('./rs-path.js');
 var path = require('path');
 var fs = require('fs');
+var rsPath = require('./rs-path.js');
+var checkRenderIsRunning = require('../services/check-render-is-running.js');
 require('node-oojs'); // 需要本地安装node-oojs
-
 
 function getStatus() {
 	oojs.setPath(rsPath.getSrcPath());
@@ -10,14 +10,15 @@ function getStatus() {
 	var renderServerAbsolutePath = rsPath.getRSRootPath();
 	// 相对于node执行目录"."，而非相对于当前文件目录__dirname
 	var renderServerRelativePath = path.relative(path.join('.'), rsPath.getRSRootPath());
+	checkRenderIsRunning.setRenderPort(configObj.server.port);
 	return {
 	    rs: {
-	        isRunning: false,
+	        isRunning: checkRenderIsRunning.getRenderState(),
 	        directoryName: rsPath.getRenderServerDirName(),
 	        absoluteDirectoryPath: renderServerAbsolutePath,
 	        relativeDirectoryPath: renderServerRelativePath,
 	        isProduction: rsPath.checkIsProduction(),
-	        port: configObj.server.port   
+	        port: configObj.server.port
 	    },
 	    db: {
 	        name: configObj.db.database,

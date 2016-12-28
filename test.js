@@ -1,23 +1,25 @@
-var net = require('net');
-var server = net.createServer();
 
-server.once('error', function(err) {
-  	if (err.code === 'EADDRINUSE') {
-    	// port is currently in use
-  	}
-});
+//------Check Port Is In Use------
 
-server.once('listening', function() {
-  	// close the server if listening doesn't fail
- 	server.close();
-});
+// var checkRenderIsRunning = require('./server/services/check-render-is-running.js');
+// var checkPortInUse = require('./server/services/check-port-in-use.js');
 
-server.listen(8124);
+// checkPortInUse.portInUse(8124, function (returnValue) {
+// 	console.log(returnValue);
+// })
+
+// checkRenderIsRunning.setRenderPort(8124);
+// setInterval(function () {
+// 	var value = checkRenderIsRunning.getRenderState();
+// 	console.log(value);
+// }, 1000);
 
 
 //------ConfigState------
 
 // var ConfigState = require('./server/states/config.js');
+// var state = ConfigState.getState();
+// console.log(state);
 
 // var diffs = [{
 // 	oldValue: '8124',
