@@ -44,14 +44,15 @@
                 <div class="column">
                     <div id="container">
                         <div class="ui top attached tabular menu">
-                            <a class="active item" data-tab="config"><span>管理Render Server配置</span> </a>
+                            <a class="item" data-tab="config"><span>管理Render Server配置</span> </a>
+                            <a class="active item" data-tab="check"><span>自检</span> </a>
                             <a class="item" data-tab="manage"><span>管理模板</span></a>
                             <a class="item" data-tab="insert"><span>添加旧模板</span></a>
                             <a class="item" data-tab="first"><span>测试旧模板</span></a>
                             <a class="item" data-tab="second">Second</a>
                             <a class="item" data-tab="third"><span>分析Log</span></a>
                         </div>
-                        <div class="ui bottom attached tab segment active" data-tab="config">
+                        <div class="ui bottom attached tab segment" data-tab="config">
                             <div class="ui form panel-config">
                                 <div class="ui positive message icon" v-show="businessState.rs.isRunning">
                                     <i class="icon smile"></i>
@@ -133,6 +134,164 @@
                                         <span>还原为默认值</span>
                                     </button>
                                 </div>                           
+                            </div>
+                        </div>
+                        <div class="ui bottom attached tab segment active" data-tab="check">
+                            <div class="ui form">
+                                <button class="ui small button basic">
+                                    <span>点击刷新</span>
+                                </button>
+                                <div class="ui info compact message small">
+                                    温馨提示：点击文件名可复制文件路径
+                                </div>
+                                <h4 class="ui dividing header"><span>开发目录</span></h4>
+                                <table class="ui basic celled table">
+                                    <thead class="full-width">
+                                        <tr>
+                                            <th class="one wide"><span>选择</span></th>
+                                            <th class="four wide"><span>当前问题</span></th>
+                                            <th><span>文件名称A</span></th>
+                                            <th><span>文件名称B</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                            <div class="ui fitted checkbox">
+                                                <input type="checkbox"> <label></label>
+                                            </div>
+                                            </td>
+                                            <td>
+                                                <label class="ui label red">
+                                                    <i class="refresh icon"></i>
+                                                    <span>styleType 不一致</span>
+                                                </label>
+                                            </td>
+                                            <td class="collapsing">
+                                                <button class="ui basic button">
+                                                    <i class="copy icon"></i>
+                                                    <span>interface/rs.proto</span>
+                                                </button>
+                                            </td>
+                                            <td class="collapsing">
+                                                <button class="ui basic button">
+                                                    <i class="copy icon"></i>
+                                                    <span>interface/rs.proto</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <div class="ui fitted checkbox">
+                                                <input type="checkbox"> <label></label>
+                                            </div>
+                                            </td>
+                                            <td>
+                                                <label class="ui label orange">
+                                                    <i class="refresh icon"></i>
+                                                    <span>文件内容不一致</span>
+                                                </label>
+                                            </td>
+                                            <td class="collapsing">
+                                                <i class="file outline icon"></i><span>interface/rs.proto</span>
+                                            </td>
+                                            <td class="collapsing">
+                                                <i class="file outline icon"></i><span>rs/api/protocol/rs.proto</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <div class="ui fitted checkbox">
+                                                <input type="checkbox"> <label></label>
+                                            </div>
+                                            </td>
+                                            <td>
+                                                <label class="ui label yellow">
+                                                    <i class="refresh icon"></i>
+                                                    <span>styleType重复</span>
+                                                </label>
+                                            </td> 
+                                            <td class="collapsing center aligned" colspan="2">
+                                                <i class="file outline icon"></i><span>interface/rs.proto</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <div class="ui fitted checkbox">
+                                                <input type="checkbox"> <label></label>
+                                            </div>
+                                            </td>
+                                            <td>
+                                                <label class="ui label black">
+                                                    <i class="refresh icon"></i>
+                                                    <span>无 tuwen_base 文件夹</span>
+                                                </label>
+                                            </td> 
+                                            <td class="collapsing center aligned" colspan="2">
+                                                <i class="file outline icon"></i><span>interface/rs.proto</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <div class="ui fitted checkbox">
+                                                <input type="checkbox"> <label></label>
+                                            </div>
+                                            </td>
+                                            <td>
+                                                <label class="ui label red">
+                                                    <i class="refresh icon"></i>
+                                                    <span>styleType 不一致</span>
+                                                </label>
+                                            </td>
+                                            <td class="collapsing">
+                                                <i class="file outline icon"></i><span>interface/rs.proto</span>
+                                            </td>
+                                            <td class="collapsing">
+                                                <i class="file outline icon"></i><span>styleType.js</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            <div class="ui fitted checkbox">
+                                                <input type="checkbox"> <label></label>
+                                            </div>
+                                            </td>
+                                            <td>
+                                                <label class="ui label red">
+                                                    <i class="refresh icon"></i>
+                                                    <span>styleType 不一致</span>
+                                                </label>
+                                            </td>
+                                            <td class="collapsing">
+                                                <i class="file outline icon"></i><span>styleType.js</span>
+                                            </td>
+                                            <td class="collapsing">
+                                                <i class="file outline icon"></i><span>rs/api/protocol/rs.proto</span>
+                                            </td>
+                                        </tr>                                        
+                                    </tbody>
+                                    <tfoot class="full-width">
+                                        <tr>
+                                            <th colspan="4">
+                                                <div class="ui small basic buttons right floated ">
+                                                    <button class="ui labeled icon button">
+                                                        <i class="arrow left icon"></i>
+                                                        <span>将右侧同步到左侧</span>
+                                                    </button>
+                                                    <button class="ui button">
+                                                        <i class="file code outline icon"></i>
+                                                        <span>点击查看详情</span>
+                                                    </button>
+                                                    <button class="ui right labeled icon button">
+                                                        <span>将左侧同步到右侧</span>
+                                                        <i class="arrow right icon"></i>
+                                                    </button>
+                                                </div>                                            
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
                             </div>
                         </div>
                         <div class="ui bottom attached tab segment" data-tab="manage">

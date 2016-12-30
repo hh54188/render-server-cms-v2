@@ -195,6 +195,6 @@ var appConfig = new Vue({
 });
 
 // 用于更新 rs.isRunning ?
-PubSub.subscrite('state.update.config', function (eventName, data) {
+// PubSub.subscrite('state.update.config', function (eventName, data) {
 
-})
+// })
