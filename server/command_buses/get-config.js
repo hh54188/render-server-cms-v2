@@ -1,7 +1,9 @@
-var ConfigState = require('../states/config.js')l
+var ConfigState = require('../states/config.js')
+var PubSub = require('pubsub-js');
 
 module.exports = {
 	handle: function () {
-		return ConfigState.getStatus();
+		var stateResult = ConfigState.getState();
+		PubSub.publish('state.update.config', stateResult);
 	}
 }

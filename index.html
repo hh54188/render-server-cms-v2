@@ -8,11 +8,14 @@
         <script type="text/javascript" src="./bower_components/semantic/dist/semantic.min.js"></script>
         <script type="text/javascript"  src="./bower_components/prism/prism.js"></script>
         <script type="text/javascript" src="./bower_components/vue/dist/vue.min.js"></script>
-        <script type="text/javascript" src="./node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.min.js"></script>
+        <script type="text/javascript" src="./node_modules/socket.io-client/dist/socket.io.min.js"></script>
         <script type="text/javascript" src="./bower_components/PubSubJS/src/pubsub.js"></script>
         <style type="text/css">
             label, span, button, div {
                 font-family: "思源黑体", "Source Han Sans", "微软雅黑", "Microsoft YaHei" !important;
+            }
+            .text-button {
+                padding: 0 5px;
             }
         </style>
     </head>
@@ -44,15 +47,15 @@
                 <div class="column">
                     <div id="container">
                         <div class="ui top attached tabular menu">
-                            <a class="item" data-tab="config"><span>管理Render Server配置</span> </a>
-                            <a class="active item" data-tab="check"><span>自检</span> </a>
+                            <a class="active item" data-tab="config"><span>管理Render Server配置</span> </a>
+                            <a class="item" data-tab="check"><span>自检</span> </a>
                             <a class="item" data-tab="manage"><span>管理模板</span></a>
                             <a class="item" data-tab="insert"><span>添加旧模板</span></a>
                             <a class="item" data-tab="first"><span>测试旧模板</span></a>
                             <a class="item" data-tab="second">Second</a>
                             <a class="item" data-tab="third"><span>分析Log</span></a>
                         </div>
-                        <div class="ui bottom attached tab segment" data-tab="config">
+                        <div class="ui bottom attached tab segment active" data-tab="config">
                             <div class="ui form panel-config">
                                 <div class="ui positive message icon" v-show="businessState.rs.isRunning">
                                     <i class="icon smile"></i>
@@ -124,7 +127,7 @@
                                 </div>
                                 <div class="field"><br></div>
                                 <div class="inline field">
-                                    <button v-disable="!UIState.validatePass || !diff" v-on:click="saveChanges" class="ui button primary">
+                                    <button v-disable="!UIState.validatePass || !diff" v-on:click="saveChangeHandler" class="ui button primary">
                                         <span>保存</span>
                                     </button>
                                     <button class="ui button basic floated right">
@@ -136,7 +139,7 @@
                                 </div>                           
                             </div>
                         </div>
-                        <div class="ui bottom attached tab segment active" data-tab="check">
+                        <div class="ui bottom attached tab segment" data-tab="check">
                             <div class="ui form">
                                 <button class="ui small button basic">
                                     <span>点击刷新</span>
@@ -228,7 +231,17 @@
                                                 </label>
                                             </td> 
                                             <td class="collapsing center aligned" colspan="2">
-                                                <i class="file outline icon"></i><span>interface/rs.proto</span>
+                                                <div class="file-component">
+                                                    <i class="file outline icon"></i>
+                                                    <span>interface/rs.proto</span>
+                                                    <!-- <i class="caret right icon"></i> -->
+                                                    <!-- <i class="caret left icon"></i> -->
+                                                    <div class="ui left pointing label">
+                                                        <a class="text-button">复制路径</a>
+                                                        <a>|</a>
+                                                        <a class="text-button">同步</a>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr>
@@ -551,6 +564,7 @@
         <script type="text/javascript" src="./scripts/global.js"></script>
         <script type="text/javascript" src="./scripts/socketio-setup.js"></script>
         <script type="text/javascript" src="./scripts/services/diff-object.js"></script>
+        <script type="text/javascript" src="./scripts/services/remote.js"></script>
         <script type="text/javascript" src="./scripts/services/command-manager.js"></script>
         <script type="text/javascript" src="./scripts/vue-directive/disable.js"></script>
         <script type="text/javascript" src="./scripts/app-config.js"></script>

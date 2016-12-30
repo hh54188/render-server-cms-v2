@@ -1,28 +1,3 @@
-var remote = {
-    _data: {
-        rs: {
-            isRunning: false,
-            directoryName: 'render-server',
-            absoluteDirectoryPath: './',
-            relativeDirectoryPath: './',
-            isProduction: false,
-            port: '8124'   
-        },
-        db: {
-            name: 'nova_ts',
-            port: '8877',
-            host: '10.1.1.1',
-            account: 'root',
-            password: '123456'
-        }
-    },
-    fetch: function () {
-        // 深度Object克隆
-        // return jQuery.extend(true, {}, this._data);
-        return JSON.parse(JSON.stringify(this._data));
-    }
-}
-
 function extendClass(baseClass) {
     // return $.extend({}, baseClass);
     return Object.assign({}, baseClass);
@@ -36,14 +11,32 @@ function deepCloneData(oldData) {
     return JSON.parse(JSON.stringify(oldData));
 }
 
+var sampleData= {
+    rs: {
+        isRunning: false,
+        directoryName: '',
+        absoluteDirectoryPath: '',
+        relativeDirectoryPath: '',
+        isProduction: false,
+        port: ''
+    },
+    db: {
+        name: '',
+        port: '',
+        host: '',
+        account: '',
+        password: ''
+    }
+}
+
 var appConfig = new Vue({
     el: '.panel-config',
     data: {
         // old 表示旧数据、修改之前的数据
         // 数据修改之后，需要通过对比旧数据找出修改的地方
         // 当用户保存之后，旧数据再次与当前修改之后的数据同步
-        businessStateOld: remote.fetch(),
-        businessState: remote.fetch(),
+        businessStateOld: sampleData,
+        businessState: sampleData,
         // 只有修改之后才允许提交
         // 通过 diff 判断
         diff: null,
@@ -179,11 +172,19 @@ var appConfig = new Vue({
             }
             return passed;
         },
-        saveChanges: function () {
+        saveChangeHandler: function (event) {
+            this.saveChanges()
+        },
+        saveChanges: function (slince) {
+            // debugger
             // 保存设置（同步数据）分两个步骤
             // 1. 首先更新本地的数据
             // 这里有另一个选择，可以使用flux模式，数据从服务端同步
             this.businessStateOld = JSON.parse(JSON.stringify(this.businessState));
+            if (slince) {
+                this.diff = null;
+                return false;
+            }
             // 2. 然后更新线上数据
             CommandManagerService.command({
                 name: 'update_config',
@@ -194,7 +195,10 @@ var appConfig = new Vue({
     }
 });
 
-// 用于更新 rs.isRunning ?
-// PubSub.subscrite('state.update.config', function (eventName, data) {
+Remote.fetch();
 
-// })
+// 用于更新 rs.isRunning ?
+PubSub.subscribe('state.update.config', function (eventName, newData) {
+    appConfig.businessState = deepCloneData(newData);
+    appConfig.businessStateOld = deepCloneData(newData);
+})

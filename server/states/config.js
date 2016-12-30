@@ -4,7 +4,7 @@ var rsPath = require('./rs-path.js');
 var checkRenderIsRunning = require('../services/check-render-is-running.js');
 require('node-oojs'); // 需要本地安装node-oojs
 
-function getStatus() {
+function getState() {
 	oojs.setPath(rsPath.getSrcPath());
 	var configObj = oojs.using('rs.common.config.global');
 	var renderServerAbsolutePath = rsPath.getRSRootPath();
@@ -33,16 +33,18 @@ function getStatus() {
 function updateConfigFile(diffArr) {
 	var configFilePath = rsPath.getConfigFilePath();
 	var content = fs.readFileSync(configFilePath, 'utf-8');
+
 	diffArr.forEach(function (diffPair) {
 		var oldValue = diffPair.oldValue;
 		var newValue = diffPair.newValue;
 
 		content = content.replace(oldValue, newValue);
 	});
+
 	fs.writeFileSync(configFilePath, content);
 }
 
 module.exports = {
-	getState: getStatus,
+	getState: getState,
 	updateConfigFile: updateConfigFile
 }
