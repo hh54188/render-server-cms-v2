@@ -1,3 +1,6 @@
+var ConfigState = require('./server/states/config.js');
+var s = ConfigState.getState();
+
 
 //------Check Port Is In Use------
 

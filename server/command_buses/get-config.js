@@ -4,9 +4,6 @@ var PubSub = require('pubsub-js');
 module.exports = {
 	handle: function () {
 		var stateResult = ConfigState.getState();
-		PubSub.publish('STATE_UPDATED', {
-			name: 'config.all',
-			data: stateResult
-		});
+		PubSub.publish('PUSH_CONFIG_STATE', stateResult);
 	}
 }

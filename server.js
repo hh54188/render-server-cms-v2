@@ -10,8 +10,12 @@ var CommandManager = require('./server/command_buses/command-manager.js');
 
 var globalSocket;
 
-PubSub.subscribe('STATE_UPDATED', function (eventName, eventInfo) {
-	globalSocket.emit('STATE_UPDATED', eventInfo);
+PubSub.subscribe('PUSH_CONFIG_STATE_UPDATED', function (eventName, diffs) {
+	globalSocket.emit('PUSH_CONFIG_STATE_UPDATED', diffs);
+});
+
+PubSub.subscribe('PUSH_CONFIG_STATE', function (eventName, newState) {
+	globalSocket.emit('PUSH_CONFIG_STATE', newState);
 });
 
 io.on('connection', function connectionHandler(socket) {

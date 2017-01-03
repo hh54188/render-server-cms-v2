@@ -212,18 +212,24 @@ var appConfig = new Vue({
 
 Remote.fetch();
 
-PubSub.subscribe('config.isRunning', function (eventName,  isRunning) {
-    appConfig.businessState.rs.isRunning = isRunning;
+PubSub.subscribe('config.update', function (eventName, diffsArr) {
+    diffsArr.forEach(function (diffPair) {
+        var newValue = diffPair.newValue;
+        var path = diffPair.path;
+
+        var pathArr = path.split('.');
+        var oldValue = appConfig.businessState;
+        for (var i = 0; i < pathArr.length - 1; i++) {
+            oldValue = oldValue[pathArr[i]];
+        }
+        oldValue[pathArr[pathArr.length - 1]] = newValue;
+    });
+
     appConfig.businessStateOld = deepCloneData(appConfig.businessState);
     appConfig.businessStateDefault = deepCloneData(appConfig.businessState);
 });
 
-// Render Server 根目录改变之后意味着所有配置都可能发生变化
-PubSub.subscribe('config.directoryName', function () {
-    Remote.fetch();
-});
-
-PubSub.subscribe('config.all', function (eventName, newState) {
+PubSub.subscribe('config.new', function (eventName, newState) {
     appConfig.businessState = deepCloneData(newState);
     appConfig.businessStateOld = deepCloneData(appConfig.businessState);
     appConfig.businessStateDefault = deepCloneData(appConfig.businessState);
