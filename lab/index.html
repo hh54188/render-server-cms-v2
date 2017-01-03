@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script type="text/javascript">
+	var obj = {
+		key: 'value'	
+	};
+
+	function clone(key) {
+		key = 'my';
+	}
+
+	function cloneObj(target) {
+		target.key = 'my';
+	}
+
+	clone(obj.key);
+	cloneObj(obj);
+	
+	console.log(obj);
+</script>
+</body>
+</html>
