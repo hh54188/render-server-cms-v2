@@ -11,7 +11,6 @@ var CommandManager = require('./server/command_buses/command-manager.js');
 var globalSocket;
 
 PubSub.subscribe('STATE_UPDATED', function (eventName, eventInfo) {
-	console.log(eventInfo);
 	globalSocket.emit('STATE_UPDATED', eventInfo);
 });
 

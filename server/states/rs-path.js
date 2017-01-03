@@ -1,6 +1,7 @@
 var path = require('path');
 var fs = require('fs');
 
+
 function checkPathIsAvailable(path) {
 	var checkExist = fs.lstatSync || fs.statSync || fs.existsSync;
 	try {
@@ -15,6 +16,20 @@ var REQUEST_FOLDER_NAME = 'request';
 var CREATIVE_JS_NAME = 'creative.js';
 var RENDER_SERVER_DIRNAME = 'render-server';
 var isProduction = false;
+
+var configFilePath = path.join('.', 'config.js');
+// 可能出现缺少字段，格式不正确，没法转换为JSON等问题
+// 就不一一处理了
+// 统一捕获错误
+try {
+	if (checkPathIsAvailable(configFilePath)) {
+		var config = JSON.parse(fs.readFileSync(configFilePath, 'utf-8'));
+		isProduction = config.production ? config.production : isProduction;
+		RENDER_SERVER_DIRNAME = config.render_server_folder ? config.render_server_folder : RENDER_SERVER_DIRNAME;
+	};	
+} catch (e) {
+	console.log("config.js syntax error--->", e);
+}
 
 // 默认该预览工具文件夹会和render-server放在同一级别（将来也可以支持用户自由配置）
 var RS_ROOT = path.resolve(path.join('.', '..', RENDER_SERVER_DIRNAME, (isProduction? 'production': '')));

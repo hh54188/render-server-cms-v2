@@ -36,7 +36,9 @@ var appConfig = new Vue({
         // 数据修改之后，需要通过对比旧数据找出修改的地方
         // 当用户保存之后，旧数据再次与当前修改之后的数据同步
         businessStateOld: sampleData,
+        businessStateDefault: sampleData,
         businessState: sampleData,
+
         // 只有修改之后才允许提交
         // 通过 diff 判断
         diff: null,
@@ -172,11 +174,24 @@ var appConfig = new Vue({
             }
             return passed;
         },
+        // ------Event Handler begin------
         saveChangeHandler: function (event) {
             this.saveChanges()
         },
+        rollbackHandler: function (event) {
+            this.rollback();
+        },
+        rollback2DefaultHandler: function () {
+            this.rollback2Default();  
+        },
+        // ------Event Handler end------
+        rollback2Default: function () {
+            this.businessState = JSON.parse(JSON.stringify(this.businessStateDefault));
+        },
+        rollback: function () {
+            this.businessState = JSON.parse(JSON.stringify(this.businessStateOld));
+        },
         saveChanges: function (slince) {
-            // debugger
             // 保存设置（同步数据）分两个步骤
             // 1. 首先更新本地的数据
             // 这里有另一个选择，可以使用flux模式，数据从服务端同步
@@ -198,15 +213,18 @@ var appConfig = new Vue({
 Remote.fetch();
 
 PubSub.subscribe('config.isRunning', function (eventName,  isRunning) {
-    appConfig.businessState.config.rs.isRunning = isRunning;
+    appConfig.businessState.rs.isRunning = isRunning;
     appConfig.businessStateOld = deepCloneData(appConfig.businessState);
+    appConfig.businessStateDefault = deepCloneData(appConfig.businessState);
 });
 
+// Render Server 根目录改变之后意味着所有配置都可能发生变化
 PubSub.subscribe('config.directoryName', function () {
     Remote.fetch();
 });
 
 PubSub.subscribe('config.all', function (eventName, newState) {
     appConfig.businessState = deepCloneData(newState);
-    appConfig.businessStateOld = deepCloneData(appConfig.businessState);    
+    appConfig.businessStateOld = deepCloneData(appConfig.businessState);
+    appConfig.businessStateDefault = deepCloneData(appConfig.businessState);
 });

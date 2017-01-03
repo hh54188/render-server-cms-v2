@@ -7,7 +7,6 @@ var checkInterval = 1000 * 2;
 var PubSub = require('pubsub-js');
 
 setInterval(function () {
-	
 	if (port){
 		checkPortService.portInUse(port, function (returnValue) {
 			if (returnValue !== isRunning) {
@@ -16,14 +15,13 @@ setInterval(function () {
 				// 服务应该只关心自身的业务
 				// 1. 对外界产生了依赖，违反了单一职责原则
 				// 2. 一旦config的数据结构发生修改，这里也需要修改
-				PubSub.publish('STATE_UPDAED', {
+				PubSub.publish('STATE_UPDATED', {
 					name: 'config.isRunning',
 					data: isRunning
 				});
 			}
 		})
 	}
-
 }, checkInterval);
 
 module.exports = {

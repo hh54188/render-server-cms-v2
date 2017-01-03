@@ -10,6 +10,7 @@
         <script type="text/javascript" src="./bower_components/vue/dist/vue.min.js"></script>
         <script type="text/javascript" src="./node_modules/socket.io-client/dist/socket.io.min.js"></script>
         <script type="text/javascript" src="./bower_components/PubSubJS/src/pubsub.js"></script>
+        <script type="text/javascript" src="./bower_components/clipboard/dist/clipboard.min.js"></script>
         <style type="text/css">
             label, span, button, div {
                 font-family: "思源黑体", "Source Han Sans", "微软雅黑", "Microsoft YaHei" !important;
@@ -63,7 +64,7 @@
                                         <div class="header">
                                             <span>Render Server运行中</span>
                                         </div>
-                                        <p><span>检测到端口8124被占用</span></p>
+                                        <p><span>检测到端口{{businessState.rs.port}}被占用</span></p>
                                     </div>
                                 </div>
                                 <div class="ui negative message icon" v-show="!businessState.rs.isRunning">
@@ -72,22 +73,30 @@
                                         <div class="header">
                                             <span>Render Server暂无运行</span>
                                         </div>
-                                        <p><span>检测到端口8124未被占用</span></p>
+                                        <p><span>检测到端口{{businessState.rs.port}}未被占用</span></p>
                                     </div>
                                 </div>
                                 <div class="inline field">
                                     <label>Render Server目录</label>
-                                    <input type="text" v-model="businessState.rs.absoluteDirectoryPath">
-                                    <button class="ui button basic icon">
-                                        <i class="icon copy"></i>
-                                        <span>复制完整目录路径</span>
-                                    </button>
+                                    <div class="ui action input">
+                                        <input disabled type="text" v-model="businessState.rs.absoluteDirectoryPath">
+                                        <button v-bind:data-clipboard-text="businessState.rs.absoluteDirectoryPath" class="ui teal right labeled icon button basic copy-btn">
+                                            <i class="copy icon"></i>
+                                            <span>复制</span>
+                                        </button>
+                                    </div>
+                                    <div class="ui left pointing label">
+                                        <span>请在config.js文件中修改</span>
+                                    </div>
                                 </div>  
                                 <div class="inline field">
                                     <label>Production目录</label>
                                     <div class="ui toggle checkbox">
-                                        <input type="checkbox" v-model="businessState.rs.isProduction">
+                                        <input disabled type="checkbox" v-model="businessState.rs.isProduction">
                                         <label><br></label>
+                                    </div>
+                                    <div class="ui left pointing label">
+                                        <span>请在config.js文件中修改</span>
                                     </div>
                                 </div>  
                                 <div class="inline field">
@@ -130,11 +139,11 @@
                                     <button v-disable="!UIState.validatePass || !diff" v-on:click="saveChangeHandler" class="ui button primary">
                                         <span>保存</span>
                                     </button>
-                                    <button class="ui button basic floated right">
-                                        <span>还原</span>
+                                    <button v-disable="!diff" v-on:click="rollbackHandler" class="ui button basic floated right">
+                                        <span>撤销修改</span>
                                     </button>
-                                    <button class="ui button basic floated right">
-                                        <span>还原为默认值</span>
+                                    <button v-disable="!diff" v-on:click="rollback2DefaultHandler" class="ui button basic floated right">
+                                        <span>还原为原始值</span>
                                     </button>
                                 </div>                           
                             </div>
@@ -563,6 +572,7 @@
         </div>
         <script type="text/javascript" src="./scripts/global.js"></script>
         <script type="text/javascript" src="./scripts/socketio-setup.js"></script>
+        <script type="text/javascript" src="./scripts/clipboard-setup.js"></script>
         <script type="text/javascript" src="./scripts/services/diff-object.js"></script>
         <script type="text/javascript" src="./scripts/services/remote.js"></script>
         <script type="text/javascript" src="./scripts/services/command-manager.js"></script>
