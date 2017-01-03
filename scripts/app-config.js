@@ -197,8 +197,16 @@ var appConfig = new Vue({
 
 Remote.fetch();
 
-// 用于更新 rs.isRunning ?
-PubSub.subscribe('state.update.config', function (eventName, newData) {
-    appConfig.businessState = deepCloneData(newData);
-    appConfig.businessStateOld = deepCloneData(newData);
-})
+PubSub.subscribe('config.isRunning', function (eventName,  isRunning) {
+    appConfig.businessState.config.rs.isRunning = isRunning;
+    appConfig.businessStateOld = deepCloneData(appConfig.businessState);
+});
+
+PubSub.subscribe('config.directoryName', function () {
+    Remote.fetch();
+});
+
+PubSub.subscribe('config.all', function (eventName, newState) {
+    appConfig.businessState = deepCloneData(newState);
+    appConfig.businessStateOld = deepCloneData(appConfig.businessState);    
+});

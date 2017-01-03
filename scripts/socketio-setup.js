@@ -4,14 +4,14 @@
 	}
 
 
-	PubSub.subscribe('command', function (eventName, data) {
-		socket.emit('command', data);
+	PubSub.subscribe('COMMAND', function (eventName, data) {
+		socket.emit('COMMAND', data);
 	});
 
 	socket = io.connect('http://127.0.0.1');
 
-	socket.on('state.update.config', function (newData) {
-		PubSub.publish('state.update.config', newData);
+	socket.on('STATE_UPDATED', function (eventInfo) {
+		PubSub.publish(eventInfo.name, eventInfo.data);
 	});
 
 })();

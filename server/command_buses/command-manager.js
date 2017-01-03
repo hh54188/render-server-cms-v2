@@ -4,7 +4,6 @@ var GetConfigCommandBus = require('./get-config.js');
 function router(commandInfo) {
 	var commandName = commandInfo.name;
 	var payload = commandInfo.payload;
-	
 	switch(commandName) {
 		case 'update_config': 
 			UpdateConfigCommandBus.handle.apply(this, payload);
