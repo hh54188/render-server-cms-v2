@@ -18,13 +18,8 @@ var renderServerDirName = 'render-server'
 var isProduction = false;
 var configFilePath = path.join('.', 'config.js');
 
-function updateRenderServerBasic (config) {
-	isProduction = config.production;
-	renderServerDirName = config.render_server_folder;
-}
-
 // 默认该预览工具文件夹会和render-server放在同一级别（将来也可以支持用户自由配置）
-function getRootPath() {
+function getRootPath(forceInProduction) {
 	return path.resolve(
 		path.join('.', '..', renderServerDirName, (isProduction? 'production': ''))
 	);
@@ -60,7 +55,10 @@ function getClassicTemplateRequestFilePath(templateName, requestInfoName) {
 }
 
 module.exports = {
-	updateRenderServerBasic: updateRenderServerBasic,
+	updateRenderServerBasic: function (config) {
+		isProduction = config.production;
+		renderServerDirName = config.render_server_folder;		
+	},
 	updateRenderServerDirName: function (name) {
 		renderServerDirName = name;
 	},
@@ -71,7 +69,7 @@ module.exports = {
 		return renderServerDirName;
 	},
 	getConfigFilePath: function () {
-		return path.join(getRootPath(), 'src', 'rs', 'common', 'config', 'global.js');
+		return path.join(getSrcPath(), 'rs', 'common', 'config', 'global.js');
 	},
 	checkIsProduction: function () {
 		return isProduction;
@@ -81,6 +79,18 @@ module.exports = {
 	},
 	getSrcPath: function () {
 		return getSrcPath();
+	},
+	getTemporarySrcPath: function (inProduction) {
+		return path.resolve(path.join('.', '..', renderServerDirName, (inProduction ? 'production': ''), 'src'));
+	},
+	getInterfaceProtoPath: function (inProduction) {
+		return path.join('.', '..', renderServerDirName, (inProduction ? 'production': ''), 'interface', 'rs.proto');
+	},
+	getProtocolProtoPath: function (inProduction) {
+		return path.join('.', '..', renderServerDirName, (inProduction ? 'production': ''), 'src', 'rs', 'api', 'protocol', 'rs.proto');
+	},
+	getStyleTypeFilePath: function (inProduction) {
+		return path.join('.', '..', renderServerDirName, (inProduction ? 'production': ''), 'src', 'rs', 'common', 'model', 'styleType.js');
 	},
 	Classic: {
 		getTemplateRootPath: getClassicTemplateRootPath,

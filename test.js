@@ -1,10 +1,12 @@
-var path = require('path');
-var fs = require('fs');
-var cmsConfigFilePath = path.join('.', 'config.js');
-var cmsConfigContent = fs.readFileSync(cmsConfigFilePath, 'utf-8');
-var cmsConfigObject = JSON.parse(cmsConfigContent);
-cmsConfigObject.production = !cmsConfigObject.production;
-fs.writeFileSync(cmsConfigFilePath, JSON.stringify(cmsConfigObject, null, 4));
+var health = require('./server/services/health-check.js');
+
+// var path = require('path');
+// var fs = require('fs');
+// var cmsConfigFilePath = path.join('.', 'config.js');
+// var cmsConfigContent = fs.readFileSync(cmsConfigFilePath, 'utf-8');
+// var cmsConfigObject = JSON.parse(cmsConfigContent);
+// cmsConfigObject.production = !cmsConfigObject.production;
+// fs.writeFileSync(cmsConfigFilePath, JSON.stringify(cmsConfigObject, null, 4));
 
 // var ConfigState = require('./server/states/config.js');
 // var s = ConfigState.getState();
