@@ -1,0 +1,95 @@
+﻿// Copyright 2013 Baidu Inc. All rights Reserved.
+
+// 页面分析服务API
+
+import "common_types.proto";
+
+package cm;
+
+option cc_generic_services = true;
+
+message PageAttributeRequest {
+    // 每个服务的访问者都有一个唯一的ID标示
+    required uint32 visitor_id = 1;
+    
+    // search id，采用bytes是为了未来升级兼容，例如8bytes->16bytes
+    optional bytes id = 2;
+
+    // 需要分析的网页URL，必须要提供的信息
+    required string url = 3;
+    // 上述url可能来自一个网页浏览上下文，refer_url可能有助于分析url
+    optional string refer_url = 4;
+    // refer_url中包含的来自搜索引擎的检索串
+    optional string refer_query = 5;
+    // 百度用户ID，即所谓的"Cookie"，实际上这是Cookie信息中一个字段
+    optional string baidu_user_id = 6;
+
+    // URL所在网站的行业类别
+    optional uint32 category_id = 7;
+    
+    // 广告位id，页面分析线下挖掘广告位相关信息，通过广告位id从索引中找到
+    optional bytes ad_block_key = 8;
+
+    // 网页的次级特征信息，当这个字段不为空的时候，PFS以这个字段信息作为输入
+    optional bytes raw_page_feature = 9;
+    
+    // 是否要返回策略调试信息
+    optional bool is_debug = 10;
+}
+
+message PageAttributeResponse {
+
+    // 网页中的核心term，数量较少，但质量非常高
+    repeated Term kernel_term = 1;
+    // 更多的term，数量多一些，但平均质量不如kernel_term
+    repeated Term extend_term = 2;
+
+    // 相比较term，粒度较大，keyword通常和特定的广告系统直接相关,
+    // 比如在关键字广告系统中，广告客户直接购买了这些词,
+    repeated Keyword page_keyword = 3;
+
+    // 基于PLSA model生成的页面类别信息
+    repeated Category plsa_category = 4;
+    // 基于KATE model生成的页面类别信息
+    repeated Category kate_category = 7;
+    // 基于百度开放平台的网页分类体系生成的页面类别信息
+    repeated Category page_vertical = 8;
+    
+    // 网页布局，详见PageType的定义
+    optional PageType page_type = 9;
+
+    // 网页的流量类型，详见TrafficType的定义
+    optional PageTrafficType traffic_type = 10;
+
+    // 是否是一个低俗的，仅适合成人看的页面
+    optional PageQualityType page_quality = 11;
+
+    // 页面反映的用户意图
+    // optional Intention intent = 12;
+
+    message Channel {
+        optional uint32 id = 1;
+        optional uint32 weight = 2;
+    }
+    // 网页被分到的Channel，可以通过channel id的支撑词了解channel的含义
+    optional Channel channel = 13;
+
+    optional AdSlotContext adslot_context = 14;
+
+    // 网页的最后修改时间，这个时间由spider在抓取网页的时候记录下来
+    optional uint32 last_modifed_time = 15;
+
+    // 是否是一张新网页？如果是一张新网页，则无法返回网页分析结果
+    // 但系统会试图抓取网页入库，在若干分钟后重新访问相同的URL，将能得到结果
+    optional bool is_new_url = 16;
+
+    // 站点质量度，3-Star > 2-Star > 1-Star
+    optional SiteQuality site_quality = 17;
+
+    optional string debug_info = 18;
+    
+}
+
+service PageAttributeService {
+    rpc search (PageAttributeRequest) returns (PageAttributeResponse);
+}

@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var PubSub = require('pubsub-js');
+var LoopService = require('../global-services/loop.js');
 
 var _config = config = {};
 var configFilePath = path.join('.', 'config.js');
@@ -30,14 +31,24 @@ function getLatestConfig() {
 
 _config = getLatestConfig();
 
-setInterval(function () {
+
+LoopService.add(function () {
 	config = getLatestConfig();
 
 	if (JSON.stringify(_config) !== JSON.stringify(config)) {
 		_config = config;
 		PubSub.publish('CONFIG_STATE_UPDATED');
-	}
-}, 1000 * 1);
+	}	
+}.bind(this));
+
+// setInterval(function () {
+// 	config = getLatestConfig();
+
+// 	if (JSON.stringify(_config) !== JSON.stringify(config)) {
+// 		_config = config;
+// 		PubSub.publish('CONFIG_STATE_UPDATED');
+// 	}
+// }, 1000 * 1);
 
 
 module.exports = {

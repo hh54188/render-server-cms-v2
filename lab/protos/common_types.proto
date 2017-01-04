@@ -1,0 +1,1256 @@
+﻿// Copyright 2013 Baidu Inc. All rights Reserved.
+// 通用类型定义
+
+package cm;
+
+// 页面类型
+enum PageType {
+    UNKNOWNPAGETYPE = 0;  // 未定义
+    BODYPAGE        = 1;  // 正文页
+    INDEXPAGE       = 2;  // 索引页
+    VIDEOPAGE       = 3;  // 视频页
+    FORUMPAGE       = 4;  // 论坛帖子
+    PICTUREPAGE     = 5;  // 图片页
+    CARTOONPAGE     = 6;  // 漫画页
+    HOMEPAGE        = 7;  // 主页
+    INTROPAGE       = 8;  // 介绍页
+    STORYPAGE       = 9;  // 小说页
+    DOWNLOADPAGE    = 10; // 下载页
+    ANSWERPAGE      = 11; // 问答页
+    SEARCHPAGE      = 12; // 搜索结果页
+    ADPAGE          = 13; // 广告页
+    POLITICIANPAGE  = 14; // 政治人物页
+}
+
+// 站点质量度，3-Star > 2-Star > 1-Star
+enum SiteQuality {
+    UNKNOWN_SITE_QUALITY = 0;
+    STAR_1 = 1;
+    STAR_2 = 2;
+    STAR_3 = 3;
+}
+
+// 网页的流量类型
+enum PageTrafficType {
+    UNKNOWNTRAFFICTYPE = 0;
+    CLASS_A = 1; // A类：反映用户需求，比较精确，不可扩展
+    CLASS_B = 2; // B类：大部分流量都是B类流量，用户需求容易扩展
+    CLASS_C = 3; // C类：页面容易产生歧义，页面不能很好的反映用户需求，如范文
+    CLASS_D = 4; // D类：娱乐类流量为主
+}
+
+// 性别
+enum Gender {
+    UNKNOWN = 0;
+    MALE = 1;
+    FEMALE = 2;
+}
+
+// 年龄
+enum Age {
+    UNKNOWN_AGE = 0;       // 未知年龄
+    TEN_TO_TWENTY = 1;    // 10岁~20岁
+    TWENTY_TO_THIRTY= 2; // 21岁~30岁
+    ABOVE_THIRTY = 3;     // 31岁以上
+}
+
+// 创意物料低俗标签
+// 0 -- 未标注
+// 1 -- 较低俗
+// 2 -- 一般低俗
+// 3 -- 不低俗
+enum CreativeVulgarTag {
+    UNTAGED     = 0;
+    MORE_VULGAR = 1;
+    VULGAR      = 2;
+    NON_VULGAR  = 3;
+}
+
+message AdSlotContext {
+    // page ad fea
+    // 3. 当前页面，多个广告块：类型（），x坐标，y坐标，区域信息？第几屏？tu
+    
+    // tu_pos
+    // 对应request中tu的广告位 位于页面第几屏    
+}
+
+message Term {
+    // Term的明文，用gbk编码
+    optional bytes str_gbk = 1;
+    optional uint32 sign1 = 2;
+    optional uint32 sign2 = 3;
+    optional uint32 weight = 4;
+}
+
+message Keyword {
+    // 关键词的明文，用gbk编码
+    optional bytes str_gbk = 1;
+    optional uint32 id = 2;
+    optional uint32 sign1 = 3;
+    optional uint32 sign2 = 4;
+    optional uint32 weight = 5;
+
+    optional uint32 timestamp = 6;
+    optional uint32 weight_with_ts = 7;
+    optional uint32 doc_frequency = 8;
+}
+
+message Category {
+    required uint32 id = 1;
+    optional uint32 weight = 2;
+}
+
+// 广告位允许展现的物料类型
+enum CreativeType {
+    // 文本
+    TEXT = 0;
+    // 图片
+    IMAGE = 1;
+    // Flash
+    FLASH = 2;
+    // 交互类型广告
+    WIDGET = 3;
+    // 图文
+    TEXT_WITH_AN_ICON = 4;
+    // 链接单元
+    LINKUNIT_WORD = 5;
+    // 视频广告
+    VIDEO = 7;
+    OLD_HTML = 6;
+    // 搜索框
+    SEARCH = 8;
+    HTML = 9;
+    //秋实富媒体素材
+    RICH_MEDIA = 10;
+    // 未知类型, 同时用作枚举类型升级的兼容性预留
+    UNKNOWN_CREATIVE_TYPE = 11;
+}
+
+// 从adx/interface/adx_common_define.h拿来
+// 广告位需要的创意封装和渲染类型
+// 0 默认
+// 1 静态创意
+// 2 动态创意
+// 3 模板创意
+enum IdeaDesType {
+    IDEA_DES_DEFAULT = 0; 
+    IDEA_DES_STATIC_IDEA = 1; 
+    IDEA_DES_DYNAMIC_IDEA = 2; 
+    IDEA_DES_TEMPLATE = 3; 
+};
+
+enum BaiduUserIdVersion {
+    BAIDU_ID_VERSION = 0;
+    CPRO_ID_VERSION = 1;
+    //浏览器指纹信息, owner : liumingshuo
+    FINGER_PRINT_ID_VERSION = 2;
+    //浏览器指纹信息，实验版本, owner : liumingshuo，有效期至2015.6.30
+    FINGER_PRINT_ID_EXP_VERSION = 3;
+    //机器码，owner：liumingshuo
+    GU_ID_VERSION = 4;
+    //etag,owner：liumingshuo
+    ET_ID_VERSION = 5;
+    //flash cookie,owner：liumingshuo
+    FC_ID_VERSION = 6;
+    //id-matching统一的uimid,owner:liumingshuo
+    UIM_ID_VERSION = 7;
+}
+
+enum SellerNetworkIDType {
+    // Inner Sellers
+    // 内部SSP ID范围[1, 1000)
+    MIN_INTERNAL_SELLER_NETWORK_ID = 1;
+    MAX_INTERNAL_SELLER_NETWORK_ID = 999;
+    UNION_SELLER_NETWORK_ID = 1;
+    QIUSHI_SELLER_NETWORK_ID  = 2;
+    HUICHUAN_SELLER_NETWORK_ID = 3;
+    IMAGE_PLUS_SELLER_NETWORK_ID = 5;
+    AD_MANAGER_SELLER_NETWORK_ID = 6; // 广告管家
+    BESC_SELLER_NETWORK_ID = 7;  //besc
+    SSP_SELLER_NETWORK_ID = 8; // ssp
+    MOBILE_SSP_SELLER_NETWORK_ID = 9; // mobile ssp
+
+    // 3rd-Party Sellers
+    // 第三方SSP ID范围[1000, ..)
+    MIN_EXTERNAL_SELLER_NETWORK_ID = 1000;
+    GOOGLE_SELLER_NETWORK_ID = 1001;
+    SOHU_SELLER_NETWORK_ID = 1002;
+    ALLYES_SELLER_NETWORK_ID = 1003; // 凤凰网
+    TENCENT_SELLER_NETWORK_ID = 1004;
+    SINA_SELLER_NETWORK_ID = 1005;
+    IQIYI_SELLER_NETWORK_ID = 1006;
+    GOOGLE_APPS_SELLER_NETWORK_ID = 1007;
+    ALLYES_PRIVATE_SELLER_NETWORK_ID = 1008;
+    YOUKU_SELLER_NETWORK_ID = 1009;
+    GOYOO_SELLER_NETWORK_ID = 1010;     // 光音
+    EMAR_SELLER_NETWORK_ID = 1011;      // 亿玛
+    WIFI_SELLER_NETWORK_ID = 1012;      // WIFI万能钥匙
+}
+
+// 统计报表类型（或称二级流量来源）。结合seller_network_id判定流量从属于哪一个
+// 统计报表。
+// * 日志中字段名应为ssp2，字段名如需修改应与统计端确认;
+// * 该字段与流量类型并非一对一关系，而是主要与特定产品的统计需求对应。具体字段
+//  的对应关系参见字段注释;
+// * 本字段的值域修改应与统计端确认。目前仅支持默认（PC）、APP、无效 三种值
+enum TrafficReportType {
+    INVALID_REPORT_TYPE = 0; // 无效报表类型（表示出现异常情况）
+    DEFAULT_REPORT_TYPE = 1; // 默认报表类型（未识别的正常流量，如PC等）
+    APP_REPORT_TYPE = 4;     // 移动App流量
+    LOCAL_DIRECT_REPORT_TYPE = 11;     // 直通车流量
+}
+
+//cookie中的baidu_user_id，用version标明是baidu_id还是cpro_id
+message BaiduId {
+    optional string baidu_user_id = 1;
+    optional BaiduUserIdVersion baidu_user_id_version = 2;
+}
+
+//广告附加信息类型
+enum AttachType {
+    ATTACH_NONE = 0;
+    ATTACH_PHONE = 1;  //电话
+    ATTACH_BAIDU_LXB = 2; //百度离线宝 
+    ATTACH_BAIDU_QIAO = 4; //百度商桥
+    ATTACH_MESSAGE = 8;  //短信
+    ATTACH_APP_DOWNLOAD = 16; // App 下载
+    ATTACH_MAP = 32; // 打开地图
+    ATTACH_MAIL = 64; // 发送邮件
+    ATTACH_CLICK2VIDEO = 128; // 点击播放视频
+    ATTACH_RICH_MEDIA = 256; // 点击播放富媒体动作
+    ATTACH_MULTILINK = 512; // 多链
+    ATTACH_APP_OPEN = 1024; // 应用唤醒
+    ATTACH_NO_ACTION = 2048; //无后续交互
+}
+
+// 终端设备具有的传感器能力类型
+enum SensorType {
+    SENSOR_MIC =  0;     // 麦克风
+    SENSOR_VDM =  1;     // 摄像头
+    SENSOR_MTO =  2;     // 多点触碰, JS实现
+    SENSOR_SIN =  3;     // 单点触碰，JS实现
+    SENSOR_GPS =  4;     // 经纬度
+    SENSOR_ACC =  5;     // 加速传感器
+    SENSOR_DIR =  6;     // 方向传感器，上下左右
+    SENSOR_TEM =  7;     // 温度传感器，温度值
+    SENSOR_DIS =  8;     // 距离传感器，是否近距离
+    SENSOR_BAL =  9;     // 陀螺仪传感器，角速度
+    SENSOR_ROT = 10;     // 旋转矢量传感器，ios无
+    SENSOR_PRE = 11;     // 压力传感器，压力值
+    SENSOR_COM = 12;     // 电子罗盘传感器，指南
+    SENSOR_LIT = 13;     // 光线传感器，ios无
+    SENSOR_SMS = 14;     // 短信
+    SENSOR_MAI = 15;     // 邮件
+    SENSOR_MAP = 16;     // 地图
+    SENSOR_LP  = 17;     // 着陆页
+    SENSOR_DL  = 18;     // 下载
+    SENSOR_PH  = 19;     // 电话
+    SENSOR_VD  = 20;     // 视频
+    SENSOR_SHO = 21;     // 震动
+    SENSOR_SOU = 22;     // 声音播放
+}
+
+// 基于终端传感器能力的软件API接口
+enum SdkApiType {
+    SDK_API_AR  = 0;    // 增强现实
+}
+
+
+//广告的附加信息，广告展示的时候，根据不同的附加信息产生不同的交互行为
+//比如电话：拨打电话  LXB：产生回呼  QIAO：跳转到商桥咨询页面
+message AttachInfo {
+    optional uint32 id = 1;  //附加信息的id 
+    optional AttachType type = 2; //附加信息类型
+    optional string content = 3; //附加信息的内容：比如电话号码
+    optional string trace_url = 4; // 检查是否存在电话/下载动作时的点击串
+    repeated uint32 slaid = 5; //广告展示的多条子链id
+}
+
+// 物料对应的文件类型,比如video的mp4等，image的jpg等
+// 如在使用过程中需要用到校验判断，请使用>= or <=
+enum MaterialFormat {
+    UNKNOWN_FORMAT = 0;  // 未知的文件类型
+    // video
+    VIDEO_MIN = 1;      // video物料最小值
+    VIDEO_MP4 = 1;      // mp4格式
+    VIDEO_3GP = 2;      // 3gp格式
+    VIDEO_FLV = 3;      // flv格式
+    VIDEO_AVI = 4;      // avi格式
+    VIDEO_MAX = 100;    // video物料最大值
+
+    // swf 物料，swf较为特殊即可为video，也可为image,
+    // 取值为video的最大值，image的最小值
+    VIDEO_IMAGE_SWF = 100;    // swf格式
+
+    // image
+    IMAGE_MIN = 100;    // image物料最小值
+    IMAGE_JPG = 101;    // jpg格式
+    IMAGE_GIF = 102;    // gif动态图
+    IMAGE_PNG = 103;    // png格式
+    IMAGE_MAX = 199;    // image物料最大值
+}
+
+// 请使用MaterialFormat，稍后会下掉VideoMimeType
+// 视频物料对应的视频文件类型
+enum VideoMimeType {
+    VIDEO_MIMETYPE_UNKNOWN = 0;  // 未知的视频文件类型
+    VIDEO_MIMETYPE_MP4 = 1;      // mp4格式
+    VIDEO_MIMETYPE_3GP = 2;      // 3gp格式
+    VIDEO_MIMETYPE_FLV = 3;      // flv格式
+    VIDEO_MIMETYPE_AVI = 4;      // avi格式
+    VIDEO_MIMETYPE_MOV = 5;      // mov格式
+    VIDEO_MIMETYPE_MPG = 6;      // mpg格式
+    VIDEO_MIMETYPE_MPEG = 7;     // mpeg格式
+    VIDEO_MIMETYPE_WMV = 8;      // wmv格式
+    VIDEO_MIMETYPE_RMVB = 9;     // rmvb格式
+    VIDEO_MIMETYPE_MKV = 10;     // mkv格式
+    VIDEO_MIMETYPE_SWF = 11;     // swf格式
+    
+    IMAGE_MIMETYPE_JPG = 12;     // jpg格式
+    IMAGE_MIMETYPE_JPEG = 13;    // jpeg格式
+    IMAGE_MIMETYPE_GIF = 14;     // gif格式
+    IMAGE_MIMETYPE_PNG = 15;     // png格式
+    IMAGE_MIMETYPE_BMP = 16;     // bmp格式
+}
+
+//广告元数据
+message AdMetaInfo {
+    optional string title = 1;
+    optional string desc = 2;
+    // 鼠标移至广告时所显示的url
+    optional string show_url = 3; 
+    // 由于后续BES执行统一的LandingPage校验
+    // 需要由一个字段传递给ADXSERVER，为此增加该字段
+    optional string landing_page_url = 14;
+    // 最终跳转到的url
+    repeated string target_url = 8;
+    //物料类型
+    optional CreativeType type = 4;
+    //物料地址
+    optional string material_url = 5;
+    optional int32 width = 6;
+    optional int32 height = 7;
+    //行业
+    repeated int32 category = 9;
+    // 附加创意信息（在秋实检索系统中也称作创意交互形式）
+    optional AttachInfo attach_info = 10;
+    // 返回样式类型
+    // 一些样式在请求时不能确定，在DSP确定
+    // 比如： 在图+流量中，敏感政治人物类流量不能普通样式广告，但可以出翻转广告；
+    //        由于请求时不能确定流量是否为敏感流量，在请求DMP后才能确定，因此通过该字段通知BFP是否用翻转样式渲染还是正常样式渲染；
+    optional AdSlotType show_type = 11;
+    // 视频广告的播放时间监测。
+    // 在当前视频广告被关闭，或者在播放的最后一秒，前端的模板会将视频广告的播放时长拼接在url中，
+    // 然后请求后端的服务器。播放时间的单位是s
+    optional string play_time_monitor_url = 12;
+    // 视频广告的码流，单位是Kbps
+    optional int32  video_bitrate = 13;
+
+    // yangjie02@baidu.com 为支持多交互方式，附加创意需要扩展为复数
+    // 附加创意信息（在秋实检索系统中也称作创意交互形式）
+    repeated AttachInfo repeated_attach_info = 15;
+    // 物料的低俗度标签，用于SSP媒体保护
+    optional CreativeVulgarTag vulgar_tag = 16;
+
+    // 原生广告需要的信息
+    optional NativeAd native_ad = 17;
+
+    //兼容秋实移动dsp
+    optional MobileDspAdinfo mob_dsp_adinfo = 18;
+    //视频广告是否有声音
+    optional bool video_sound = 19 [default = true];
+    // 视频广告时长，单位是s
+    optional int32 video_duration = 20;
+    // 视频文件类型，比如mp4等
+    // 请使用MaterialFormat，稍后会下掉VideoMimeType
+    optional cm.VideoMimeType video_mime_type = 21;
+    // 物料文件类型,比如video的mp4等，image的jpg等
+    optional cm.MaterialFormat material_format = 22;
+}
+
+enum PageQualityType {
+   UNRESTRICTED = 0;  // 不限制
+   ADULTONLY    = 1;  // 只限成人        
+}
+
+// 广告位类型
+enum AdSlotType {
+    MIN_ADSLOT_ID = 0;
+    // 嵌入 (包含移动设备上的嵌入广告位)
+    EMBEDDED = 0;
+    // 悬浮
+    FLOAT = 1;
+    // 贴片
+    PATCH = 2;
+    // 验证码 
+    CAPTCHA = 3;
+    // 中间页
+    VERTICAL_PAGE = 4;
+    // 视窗
+    WINDOW = 5;
+    // 对联 
+    COUPLET = 6;
+    // 路障
+    BLOCK = 7;
+    // 图+ICON样式
+    IMAGE_ICON = 8;
+    // 图+贴片样式
+    IMAGE_PATCH = 9;
+    // 图+右上展开样式
+    IMAGE_UNFOLD = 10;
+    // 移动流量 插屏
+    MOBILE_INSERT_SCREEN = 11;
+    // 移动流量 开屏
+    MOBILE_ON_SCREEN = 12;
+    // 移动流量 原生广告
+    MOBILE_NATIVE = 13;
+
+    MIN_VIDEO_TYPE_ID = 21;
+    // video  前贴，线性广告
+    VIDEO_PRE_ROOL   = 21;
+    // video  中贴，线性广告
+    VIDEO_MID_ROOL   = 22;
+    // video  后贴，线性广告
+    VIDEO_POST_ROOL  = 23;
+    // video  覆盖广告，非线性广告
+    VIDEO_OVERLAY    = 24;
+    // video  视频链接，非线性广告
+    VIDEO_VIDEO_LINK = 25;
+    // video  视频暂停广告，非线性广告
+    VIDEO_PAUSE      = 26;
+    // video  工具栏广告，非线性广告
+    VIDEO_TOOL_BAR   = 27;
+    MAX_VIDEO_TYPE_ID = 27;
+
+    // 后面图+样式用3X
+    // imageplus 翻转样式
+    IMAGE_FLIP = 31;
+    IMAGE_YUETU = 32;
+
+    // 移动流量 横幅广告
+    MOBILE_BANNER = 41;
+    // 移动流量 积分墙广告
+    MOBILE_WALL = 42;
+    // 移动流量 应用推荐墙广告
+    MOBILE_APP_REC_WALL = 43;
+    // 移动流量 轮盘广告
+    MOBILE_LUN_PAN = 44;
+    // 移动流量 缓存开屏广告 实验性产品,准备废弃, 暂时占坑
+    MOBILE_CACHE_SPLASH = 45;
+    // 移动流量 实时开屏广告
+    MOBILE_REALTIME_SPLASH = 46;
+    // 移动流量 推荐墙广告
+    MOBILE_REC_WALL = 47;
+    // 移动流量 移动视频框流量
+    MOBILE_VIDEO = 48;
+    // 移动流量 悬浮前链
+    MOBILE_FRONT_LINK = 49;
+    //追加的时候一定要同步更新
+    MAX_ADSLOT_ID = 49;
+}
+
+//query关键词的来源
+enum QuerySrc {
+    // 无query
+    NO_QUERY = 0;
+    // 页面
+    QUERY_FROM_PAGE = 1;
+    // refer
+    QUERY_FROM_REFER = 2;
+    // cookie
+    QUERY_FROM_COOKIE = 3;
+    //来自hq
+    QUERY_FROM_HQ = 4;
+}
+
+//iframe属性
+enum IframeStatus {
+    //iframe嵌套
+    IFRAME_NEST = 1;
+    //跨域iframe嵌套
+    CROSS_DOMAIN_NEST = 2; 
+    //宽小于40或者高小于10
+    QUALIFIED_IFRAME_SIZE = 4;
+    //实际显示的宽高小于广告位的宽高
+    SMALLER_IFRAME_SIZE = 8;
+    //实际显示的宽高大于二倍的广告位宽高
+    TWICE_BIGGER_IFRAME_SIZE = 16;
+}
+
+// 展现位置，位于首屏，次屏还是其他屏
+enum SlotVisibility {
+    NO_DETECTION = 0;
+    ABOVE_THE_FIRST_FOLD = 1;
+    BETWEEN_THE_FIRST_AND_THE_SECOND_FOLD = 2;
+    BELOW_THE_SECOND_FOLD = 3;
+}
+
+// 广告位补余的设置
+enum SlotComplement {
+    //非补余
+    SLOT_NORMAL = 0;
+    //公益
+    SLOT_STANDBY = 1;
+    //自定义
+    SLOT_SELFDEFINE = 2;
+    //纯色
+    SLOT_COLOR = 3;
+    //第三方，例如谷歌
+    SLOT_THIRDPARTY = 4;
+    //LU标签云
+    SLOT_LUCLOUD = 5;
+}
+
+// 设备的平台，PC、手机、平板
+enum DeviceType {
+    UNKNOWN_DEVICE = 0;
+    PC = 1;
+    HIGNEND_PHONE = 2;
+    TABLET = 3;
+}
+
+// 移动设备信息
+message Mobile {
+    // 移动平台名，例如android，iphone等等
+    enum OS {
+        UNKNOWN_OS = 0;
+        IOS = 1;
+        ANDROID = 2;
+        WINDOWS_PHONE = 3;
+    }
+    optional OS platform = 1 [default = UNKNOWN_OS];
+    // 移动设备厂商，例如Nokia, Samsung.
+    optional string brand = 2;
+    // 移动设备的型号，例如Notes2, Galaxy
+    optional string model = 3;
+    // 移动操作系统版本号，例如iPhone 4.2.1，major，minor，micro分别是4， 2， 1
+    message DeviceOsVersion {
+        optional int32 os_version_major = 1;
+        optional int32 os_version_minor = 2;
+        optional int32 os_version_micro = 3;
+    };
+    optional DeviceOsVersion os_version = 4;
+    // 操作系统是否越狱(一半针对iOS系统而言)
+    optional bool is_jail_break = 25 [default = false];
+    // 设备支持的传感器能力集合
+    repeated SensorType device_sensor_types = 26;
+    // SDK软件API接口
+    repeated SdkApiType sdk_api_types = 28;
+    // 设备内存大小
+    optional uint32 device_memory_size = 29;
+    // 设备扩展内存大小
+    optional uint32 device_extended_memory_size = 30;
+    // 移动设备厂商型号id,设备列表从日志中挖掘流量较大的约450种，由网盟移动部门指定id编号
+    optional uint32 brand_model_id = 15;
+    // 移动设备运营商PLMN码，也叫MCC/MNC tuple
+    // 由MCC和MNC组成，具体含义见：
+    // http://en.wikipedia.org/wiki/Mobile_Network_Code
+    // 其中MCC代表移动设备国家代码
+    // MNC代表移动设备网络代码
+    // 采用string类型，由MCC和MNC共同组成
+    // 中国移动的一个可能的carrier_id是："46000"
+    // 中国联通的一个可能的carrier_id是："46001"
+    optional string carrier_id = 5;
+    
+    // 运营商代号，每个运营商唯一(PLMN码每个运营商可能有多个)
+    enum IspID {
+        ISP_UNKNOWN         = 0;  //未知运营商
+        ISP_CHINA_MOBILE    = 1;  //中国移动
+        ISP_CHINA_UNICOM    = 2;  //中国联通
+        ISP_CHINA_TELECOM   = 3;  //中国电信
+        ISP_FOREIGN         = 254; //其它运营商
+    }
+    optional IspID isp_id = 16;
+
+    // 基站标识ID
+    optional string cell_identity = 27;
+
+    // 是否来自app
+    optional bool is_app = 7 [default = false];
+    // 百度移动联盟为该App分配的app id
+    optional string app_id = 8;
+    // 如果来自苹果商店，则直接是app-store id，如果来自Android设备，则是package的全名
+    optional string app_identifier = 20;
+    // 在百度移动联盟的开发者ID
+    optional int32 app_publisher_id = 21;
+
+    // App允许的交互类型
+    // 目前Mobile App流量仅仅允许三种交互形式
+    // ATTACH_NONE : 没有交互创意
+    // ATTACH_PHONE : 拨打电话
+    // ATTACH_APP_DOWNLOAD : 下载App应用
+    repeated AttachType app_interaction_type = 22;
+
+    // 移动设备的平台 TODO wangshize@baidu.com 废弃字段，后续将使用DeviceType
+    enum MobileDeviceType {
+        UNKNOWN = 0;
+        HIGNEND_PHONE = 1;
+        TABLET = 2;
+    }
+    // TODO 该字段即将废弃，后续使用device_type字段，以保持一致
+    optional MobileDeviceType mobile_device_type = 9 [default = UNKNOWN];
+    // 移动设备屏幕是横向还是纵向
+    enum ScreenOrientation {
+        SCREEN_ORIENTATION_UNKNOWN = 0;
+        SCREEN_ORIENTATION_PORTRAIT = 1;
+        SCREEN_ORIENTATION_LANDCAPE = 2;    
+    }
+    optional ScreenOrientation screen_orientation = 10 [default = SCREEN_ORIENTATION_UNKNOWN];
+    // 设备屏宽
+    optional int32 screen_width = 23;
+    // 设备屏高
+    optional int32 screen_height = 24;
+    // 设备屏幕像素密度
+    optional float screen_element_density = 31 [default = 1.0];
+    // 是否是全屏广告请求，例如app启动时广告
+    optional bool is_interstitial_request = 11;
+    // 如果是应用内广告，则可以给出app类别id
+    // 一级行业，在后续升级中，建议使用category_ids字段，后续将会下掉
+    optional int32 app_primary_category_id = 12;
+    // 二级行业，在后续升级中，建议使用category_ids字段，后续将会下掉
+    optional int32 app_secondary_category_id = 14; 
+    // 网络类型，包括wifi，3g等
+    enum NetworkType {
+        UNKNOWN_NETWORK = 0;
+        WIFI = 1;
+        MOBILE_2G = 2;
+        MOBILE_3G = 3;
+        MOBILE_4G = 4;
+    }
+    optional NetworkType network_type = 13 [default = UNKNOWN_NETWORK];
+
+    // 移动设备序列号
+    message MobileID {
+        // 移动设备ID的类型，含设备ID及广告追踪ID
+        enum IDType {
+            // 未知
+            UNKNOWN = 0;
+            // IMEI，支持系统：Android
+            IMEI = 1;
+            // MAC地址，支持系统：Android
+            MAC = 2;
+            // IMSI，支持系统：Android
+            IMSI = 3;
+            // Android ID，支持系统：Android
+            ANDROID_ID = 4;
+            // Identifier for Advertising，支持系统：iOS
+            IDFA = 5;
+            // 百度私有持久化用户ID，支持系统：Android
+            CUID = 6;
+            // ODIN-1，支持系统：Android，Windows Phone
+            ODIN_1 = 7;
+            // Serial Number,  used for QIUSHI only,  maybe IMEI/meid/mac
+            // TODO yangjie02 秋实的历史遗留ID，不是标准接口。后续方案中
+            // 应该由秋实切换为标准方案，DMP和ADX则下线遗留类型。
+            SN = 8;
+        }
+
+        // ID加密类型
+        enum CryptoType {
+            PLAIN = 0;  // 明文
+            SHA1  = 1;  // SHA-1加密算法
+            MD5   = 2;  // MD5加密算法
+        }
+
+        required IDType type = 1;
+        optional CryptoType crypto = 2 [default = PLAIN];
+        required string id = 3;
+    }
+
+    repeated MobileID id = 19;
+
+    // TODO yangjie02@baidu.com 暂时保留该字段。待BS升级后删除
+    optional string sn = 17;
+
+    // SDK版本号：1.0.0
+    optional string sdk_version = 18;
+
+    // 支持多种行业id的接口，后续将取代app_primary_category_id和
+    // app_secondary_category_id;
+    // 该接口总是存储==最细==粒度的分类信息，例如如果一级分类和二级分类同时存在，
+    // 优先选取二级分类向下传递
+    repeated int32 category_ids = 32;
+   
+    // 安装列表     
+    repeated uint64 app_list = 33;       
+    
+    // 推广应用，仅一个值，例如：com.tuniu.app.ui
+    optional string promote_product = 34;    
+    
+    // 当流量类型(TrafficType)是app时，细分sdk api    
+    optional AppTrafficSource app_traffic_source = 35;
+
+    // app的下载地址
+    optional string app_download_link = 36;
+
+    // Access Point 无线访问节点
+    message ApInfo {
+        optional string mac = 1 ;
+        optional string ssid = 2;
+        optional int32 rssi = 3;    // Received Signal Strength Indication ：信号强度指示
+    };
+
+    // 附近的AP设备信息 不包含当前连接的AP设备
+    repeated ApInfo nearby_ap = 37;
+    
+    // 当前连接的AP设备信息
+    optional ApInfo connected_ap = 38;
+    
+    // 当前APP会话ID
+    optional uint64 cur_session_id = 39;
+
+    // 移动app流量类型
+    enum AppFlowType {
+        UNKNOWN_SRC = 0; // 未知的流量来源, 老api、jssdk等
+        ANDROID_SDK = 1; // 安卓sdk
+        IOS_SDK = 2;     // IOS sdk
+        TC = 3;          // tc转码页流量
+        API = 4;         // API
+        NAKED_SDK = 5;   // 未知的sdk, 拿不到sdk具体信息的
+        WAP = 6;         // wap流量
+    }
+    optional AppFlowType sdk_v = 40 [default = UNKNOWN_SRC];
+
+    // APP当前出广告页面的页面标识, 粒度比 APPID 更细
+    optional bytes intent_info = 41;
+
+    // 页面主题，用于咨询、论坛类app，传递当前版块的主题
+    // 当前仅MDSP使用，用于频道定向功能
+    repeated bytes page_topics = 42;
+}
+
+// Buyer(DSP) id List，See http://wiki.babel.baidu.com/twiki/bin/view/Com/Ecom/Id-map
+enum BuyerIDType {
+    NOVA_BUYER_ID = 1;
+    DAN_BUYER_ID = 2;
+    BUYER_ADAPTOR_ID = 3;
+    LU_DSP_ID = 4;
+    SUPER_NOVA_BUYER_ID = 5;
+    MOBADS_BUYER_ID = 6;    // 秋实检索端buyer id
+    LU_WORD_DSP_ID = 7;     // LUDSP Only Bid on Word
+    ZERO_DSP_ID = 8;        // 一站式DSP buyer id
+    MIN_THIRD_PARTY_BUYER_ID = 1000;
+
+    // PSDSP检索端buyer id 为避免日志打印紊乱，且计划将其作为外部dsp接入，作为外部dsp分配id
+    // 如下逻辑仍作为内部dsp处理：
+    // 1. rtb接口
+    // 2. pre-targeting
+    // 3. qps
+    PS_BUYER_ID = 7578262;
+}
+
+//广告计费模式
+enum ChargeType {
+    CHARGE_CPM = 0;     // 采用cpm计费
+    CHARGE_CPC = 1;     // 采用cpc计费
+    CHARGE_GD_CPM = 2;  // 包断CPM
+    CHARGE_GD_CPD = 3;  // 包断CPD 
+    CHARGE_NONE = 9;    // 不计费
+    CHARGE_CPT = 10;    // 按投放时段计费
+}
+
+// 转化目标
+enum TargetCostType {
+    TARGET_UNKNOWN = 0; // 未知转化目标
+    IMPRESSION = 1;     // 关注展现
+    CLICK = 2;          // 关注点击
+    CONVERSION = 3;     // 关注转化
+    DURATION = 4;       // 关注时长
+}
+
+// DSP与客户之间的结算方式
+enum SettleType {
+    FLOAT_TARGET = 1; // 采用竞得价结算(目标价)
+    FLOAT_MAX = 2;  // 采用竞得价结算(最高价)
+    FIXED = 3;  // 固定价结算 
+    SETTLE_UNKNOWN = 4;    // 未知结算方式, 可做预留
+}
+
+// 流量类型（如PC、APP、TC转码页面等）
+enum TrafficType {
+    INVALID_TRAFFIC_TYPE = 0;
+    PC_TRAFFIC_TYPE  = 1;       // PC流量
+    TRANSCODE_TRAFFIC_TYPE = 2; // tc转码流量
+    APP_TRAFFIC_TYPE = 3;       // app流量
+    SITEAPP_TRAFFIC_TYPE = 4;   // siteapp转码流量
+    VIDEO_TRAFFIC_TYPE = 5;     // 视频流量
+    WAP_TRAFFIC_TYPE = 6;       // WAP流量
+}
+
+// app流量来源 
+enum AppTrafficSource {
+    APP_TRAFFIC_UNKNOWN = 0;
+    APP_TRAFFIC_SDK = 1;
+    APP_TRAFFIC_API = 2;     
+} 
+
+// 浏览器内核
+enum BrowserKernelType {
+    INVALID_KERNEL = 0;
+    IE_KERNEL = 1;        
+    CHROME_KERNEL = 2;    
+    FIREFOX_KERNEL = 3;  
+    SAFARI_KERNEL = 4;  
+    UNUSE_KERNEL = 5;  
+    IE6_KERNEL = 6;   
+    IE11_KERNEL = 7;  
+}
+
+message Geo {
+    // 经纬度信息
+    message Coordinate {
+        // 经纬度坐标标准  
+        enum Standard {
+            // 百度地图的经纬度坐标标准
+            BD_09 = 0;
+            // 国测局制定的经纬度坐标标准
+            GCJ_02 = 1;
+            // 国际经纬度坐标标准 
+            WGS_84 = 2;
+            // 百度地图的墨卡坐标标准,以米为单位
+            BD_09_LL = 3;
+
+        }
+        // 地图坐标标准
+        optional Standard standard = 1;
+        // 维度
+        optional float latitude = 2;
+        // 经度
+        optional float longitude = 3;
+    }
+    repeated Coordinate user_coordinate = 1;
+
+    // 用户位置信息
+    message UserLocation {
+        optional string province = 1;
+        optional string city = 2;
+        optional string district = 3;
+        optional string street = 4;
+    };
+    optional UserLocation user_location = 2;
+
+    optional uint32 citycode = 3;
+
+    // 所在商圈信息，如 "人民大学,中关村,苏州街"
+    optional string business = 4;
+}  
+
+message Video {
+    // 视频的标题
+    optional bytes title = 1;
+    // 视频的标签
+    repeated bytes tags = 2;
+    // 视频的播放时长
+    optional int32  content_length = 3;
+    // 频道的id，可以有多个
+    repeated int64  channel_id = 4;
+    // 视频上传者id
+    optional bytes provider_id = 5;
+    // 视频节目id
+    optional bytes show_id = 6;
+    // 视频id
+    optional bytes video_id = 7;
+
+    // 视频版权
+    enum CopyRight {
+        CR_NONE = 0;
+        CR_EXIST = 1;
+        CR_UGC = 2;
+        CR_OTHER = 3;
+    }
+    optional CopyRight copyright = 8;
+    // 媒体要求返回的视频文件类型,允许媒体同时请求多种不同的视频文件类型,比如mp4等
+    // 请使用MaterialFormat，稍后会下掉VideoMimeType
+    repeated cm.VideoMimeType video_mime_type = 9 [packed=true];
+    // 物料文件类型,比如video的mp4等，image的jpg等
+    repeated cm.MaterialFormat material_format = 10 [packed=true];
+}
+
+//计费名被替换的类型
+enum CntnReplaceType {
+    CNTN_REPLACE_NONE = 0;
+    CNTN_REPLACE_SITE = 1;
+    CNTN_REPLACE_USER = 2;
+}
+
+// 用于取代cpro_info中的消息，暂时只有级别和module
+message DebugInfo {
+    // Debug_level 目前范围是0-5  有意义的是0不打debuglog,1少量，2,3最多
+    optional int32 debug_level = 1;
+    //could be uap,bs,as,ui,adx,bfp...
+    repeated string debug_module = 2;  
+    //用于debug请求，只发送给配置的dsp
+    repeated int32  prefered_buyers = 3;
+}
+
+enum BiddingFlag {
+    // SSP标识的可以开放竞价的流量，是媒体的诉求
+    SSP_BIDDING_FLAG = 1;
+    // ADX真正开放出去的流量，是流量交易平台的决策
+    REAL_BIDDING_FLAG = 2;
+    // 这最初是LUDSP(xiezhuxiao@baidu.com)提出的需求，用于标识该流量是否独占的递送给一个DSP
+    // SellerAdaptor接入的流量，认为是流量递送给多个DSP(尽管ADX可能只观察到一个)
+    // BFP接入的流量，如果是开放流量，认为是流量递送给多个DSP
+    // BFP接入的流量，如果是非开放流量，并且preferred_buyers中只有一个，认为流量递送给一个DSP
+    // 若不然，认为流量递送给多个DSP
+    EXCLUSIVELY_DELIVERED_TO_ONE_DSP = 3;
+}
+
+enum BidderType {
+    // 放弃竞价或者其他未知错误导致的类型未决
+    BIDDER_NONE = 0;
+    // 公有交易市场内的竞价（SSP认为是私有交易竞价的补余）
+    PUBLIC_AUCTION = 1; 
+    // 私有交易市场内的竞价
+    PRIVATE_AUCTION = 2;
+    // 优先交易
+    PREFERRED_ORDER = 3;
+    // purchase order
+    PURCHASE_ORDER  = 4;
+    // 统一命名，优先交易，pmp在pm那里统一为prefer
+    // deal，后续请使用该定义
+    PREFER_DEAL = 3;
+    // 统一命名，保量执行统一为gd(包含po)
+    GUARANTEED_DELIVER = 4;
+}
+    
+// 竞价参与者，和竞价类型统一使用，统一表达上游对于交易的诉求
+enum TransactionParticipant {
+    ALL = 0;            // default
+    INTERNAL_DSP = 1;   // 只有内部dsp参与交易，注意，这里包含补余德逻辑
+                        // 填写了该值表示即使补余，也只能使用内部dsp补余
+    EXTERNAL_DSP = 2;   // 只有外部dsp参与交易，同上，对于补余也适用
+}
+
+// Information about any preferred orders that matched for this inventory.
+message PreferredOrder {
+    // An id identifying the deal.
+    optional string id = 1;
+    // A quantitative value identifying the deal priority
+    optional int32 priority =  2;
+    // An id identifying the buyer.
+    optional int32 buyer_id = 3;
+    // The fixed CPM deal that applies to your account for this adslot.
+    optional int64 fixed_cpm = 4;
+    // 历史注记
+    // 最初Preferred Order是媒体和DSP线下达成并委托BES实现
+    // 这种情况BES并不参与计费、分成的财务过程。
+    // 后续又有BES单独和DSP谈Preferred Order的需求，需要计费、分成等财务过程。
+    // 这部分信息应集中的由业务端提供，并传递给检索端。
+    // 后续应考虑这部分的标准化工作。
+    // (TODO zhangtao11@baidu.com)
+    // Charging mode with demand side
+    optional cm.ChargeType charge_mode = 5 [default = CHARGE_NONE];
+    // Sharing mode with publihser side
+    optional cm.ChargeType sharing_mode = 6 [default = CHARGE_NONE];
+}
+
+enum PacingType {
+    EVENLY = 0;                  // 平均投放 作为默认值
+    AS_FAST_AS_POSSIBLE = 1;     // as fast as possible，越快越好
+};
+
+// Purchase order的订单信息
+message PurchaseOrder {
+    // 订单id，全局唯一
+    optional uint32 order_id = 1; 
+    // 订单名字
+    optional string order_name = 2;
+    // 交易达成的buyer id
+    optional int32 buyer_id = 3;
+    // 订单cpm
+    optional int32 fixed_cpm = 4;
+    // 订单优先级, pom给出
+    optional uint32 priority = 5;
+    // 订单展现的概率,权重, pom给出
+    optional double probability = 6;
+    // 订单控制信息
+    message ImpressionControlInfo {
+        // 曝光控制类型，默认不进行控制
+        // 对于CPT，仅仅可能存在频次控制
+        // 对于CPM，可能同时存在
+        optional ImpressionControlType ctl_type = 1 [default = IMPRESSION_CTL_NONE];
+        // 曝光控制的阀值，超过此值，则过滤
+        optional uint32 threshold = 2; 
+        // 当前曝光的展现量
+        optional uint32 accomplish = 3;
+        // 曝光控制的开始时间,Unix时间戳
+        optional uint64 start_time = 4;
+        // 曝光控制的结束时间,Unix时间戳
+        optional uint64 end_time = 5;
+    };
+    repeated ImpressionControlInfo impression_ctl_info = 7;
+    // po的分成价格，单位为1/1000分
+    optional int32 sharing_price = 8;
+    // paceing
+    optional PacingType pacing = 9 [default = EVENLY];      // 投放速率
+    // percentage
+    optional int32 percentage = 10; // CPT的投放比例, 1-100
+    // charging type
+    optional ChargeType charge_mode = 11 [default = CHARGE_CPM]; 
+}
+
+// 曝光控制类型
+enum ImpressionControlType {
+    // 不进行曝光控制
+    IMPRESSION_CTL_NONE = 0;
+    // 频控
+    IMPRESSION_CTL_FREQ = 1;
+    // 量控
+    IMPRESSION_CTL_AMOUNT = 2;
+}
+
+// 为了监控一条请求的整体性能，各个模块需要把下游模块的性能信息传递给上游，
+// 同时加入自己的性能信息，最终由ADX统一汇总打印到status日志中
+message PerfInfo {
+    optional string name = 1;
+    optional int32 value = 2;
+}
+
+// 前链竞价样式类型
+enum Style {
+    // 排行榜样式
+    RANK_LIST_STYLE = 0;
+    // 配图样式
+    IMAGE_MATCHING_STYLE = 1;
+    // 标签云样式
+    TAB_CLOUD_STYLE = 2;
+}
+
+enum ThirdPartyIDType {
+    QQ = 0;         // QQ号码
+    EMAIL = 1;      // EMAIL账号
+    ALIPAY = 2;     // 支付宝账号
+    WECHAT = 3;     // 微信账号
+}
+
+message ThirdPartyId {
+    optional ThirdPartyIDType type = 1;
+    optional string id = 2;
+}
+
+// 广告位归一化后的尺寸
+// 根据广告位原始尺寸和产品词表调整得出
+message NormalizedAdSlotSize {
+    optional int32 width = 1;
+    optional int32 height = 2;
+    optional double width_height_ratio = 3; // width to height ratio 宽高比
+}
+
+// 原生广告的请求参数
+message NativeAdParam {
+    enum Fields {
+        NATIVE_TITLE = 0x1;
+        NATIVE_DESC = 0x2;
+        NATIVE_IMAGE = 0x4;
+        NATIVE_ICON = 0x8;
+        NATIVE_APPSIZE = 0x10;
+        NATIVE_ACTIONTYPE = 0x20;
+        NATIVE_VIDEO = 0x40;
+    }
+    repeated int64 required_fields = 1;
+
+    message ImageParam {
+        optional int32 width = 1;
+        optional int32 height = 2;
+    }
+    repeated ImageParam image_param = 2;
+
+    optional int32 ad_num = 3;
+}
+
+// 原生广告的结构定义
+message NativeAd {
+    // 标题
+    optional string title = 1;
+
+    // 描述
+    optional string desc = 2;
+
+    message AppImage {
+        optional string url = 1;
+        optional int32 width = 2;
+        optional int32 height = 3;
+    }
+    
+    //image,支持多图片
+    repeated AppImage image = 3;
+
+    //icon
+    optional AppImage icon = 4;
+
+    //app size
+    optional int32 app_size = 5;
+
+    // 动作类型
+    optional AttachType action_type = 6;
+
+    // 视频地址
+    optional string video_url = 9;
+
+    // 视频时长
+    optional int32 video_duration = 10;
+
+    // 品牌名称
+    optional string brand_name = 11;
+
+    //以下为兼容秋实的字段，对其他dsp透明
+    //app package
+    optional string app_package = 7;
+
+    //反作弊 anti_tag
+    optional int32 anti_tag = 8;
+}
+
+//兼容秋实dsp
+//TODO:yulei03 将该结构体的字段全部提取标准化
+message MobileDspAdinfo {
+    // 生成点击串ck域的字段
+    optional uint32 anti_query_tag = 1;
+    // 下载类广告包名
+    optional string app_name = 2;
+    //缓存开屏使用的缓存noticeurl
+    optional string clklog_url2 = 3;
+    //app广告logo和大图可能同时出现，所以logo需要单独传字段
+    optional string logo_url = 4;
+    //应用唤醒打开页面
+    optional string app_open_page = 5;
+    //应用唤醒版本
+    optional uint32 app_open_version = 6;
+    //LT广告触发的坐标系
+    message Position {
+        optional double x = 1;
+        optional double y = 2;
+    }
+    optional Position position = 7;
+    //积分墙积分
+    optional uint32 wall_point = 8;
+    //是否给积分
+    optional uint32 job_done = 9;
+    //应用包名
+    optional string app_package = 10;
+    //应用大小
+    optional uint32 app_size = 11;
+    //样式实验
+    optional string theme_exp = 12;
+    //图片广告右侧icon的可见性
+    optional bool show_indicator_button = 13;
+    //点击监控url
+    optional string click_monitor_url = 14;
+    //描述2
+    optional string desc2 = 15;
+    //二次确认的区域
+    optional Position second_confirm_area = 16;
+    //全部样式实验
+    optional string theme_exp_global = 17;
+    //app样式
+    optional string theme_app = 18;
+    //回种cookie
+    optional string new_cookie = 19;
+    //秋实的s值比较特殊，有两个，这是另一个
+    //TODO 统一s值后可以去除
+    optional string query_key = 20;
+    //app广告视频和大图可能同时出现。对于此种视频广告，material_url传视频，image_url传大图
+    optional string image_url = 21;
+    //应用唤醒退化链接
+    optional string app_open_fallback = 22;
+    //应用唤醒版本 LP=1；DL=2
+    optional uint32 app_open_fb_type = 23;
+}
+
+//创意标签扩展结构体
+message IdeaTag {
+    optional uint64     tag1 = 1;
+    optional uint64     tag2 = 2;
+    optional uint64     tag3 = 3;
+}
+
+// 用户标签扩展结构体
+message UserTag {
+    optional uint64 tag1 = 1;
+    optional uint64 tag2 = 2;
+    optional uint64 tag3 = 3;
+}
+
+// 地图服务返回的POI信息
+message PoiInfo {
+    optional bytes name = 1 [default = ""];
+    optional bytes type = 2 [default = ""];
+    message Point {
+        optional double x = 1 [default = 0.0];
+        optional double y = 2 [default = 0.0];
+    }
+    optional Point location = 3;
+    optional int32 type_id = 4 [default = 10];
+    optional bytes type_all = 5; // 未经剪裁过的行业信息(type返回的是一级行业)
+    // poi info来源
+    enum PoiSrc {
+        UNKNOWN_SRC = 0;
+        LBS = 1; // location server
+        RGC = 2; // rgc service
+    }
+    optional PoiSrc poi_src = 6;
+}
+
+// 枚举需要matching 的类型
+// 用于上游判断是否需要通过何种方式进行matching
+// 可以有多种matching方式，目前只有点击跳转一种
+enum NEED_MATCHING_TYPE {
+    CLICK_JUMP_BROWSER = 1;
+}
+
+enum PromotionDeviceType {
+    // 仅PC设备
+    PC_ONLY = 1;
+    // 仅移动设备
+    MOBILE_ONLY = 2;
+    // 整合营销
+    INTEGRATED_PROMOTION = 3;
+}
+
+// 用户规模类型定义
+// 零号DSP中广告主的属性之一
+// 用于点击反作弊
+enum UserScaleType {
+    // 未知客户类型
+    SCALE_UNKOWN = 0;
+    // 大客户
+    SCALE_KA = 1;
+    // 中小客户
+    SCALE_SME = 2;
+}
+
+// 资金池类型定义
+// 零号DSP中Plan层级的业务属性
+// 用于点击反作弊
+enum AdvertisingFundingPoolType {
+    // 技术服务资金池
+    POOL_TECH_SERV_POOL = 0;
+    // 广告资金池
+    POOL_AD_POOL = 1;
+}
+
+// 创意的推广配置中偏好或允许的交易方式
+// 该类型与结算方式共同影响到创意胜出后DSP/BES对于创意的计价
+enum PlanType {
+    PLAN_TYPE_UNKNOWN = 0;
+    // RTB类型的推广计划, 仅允许投放RTB流量
+    RTB_PLAN_TYPE = 1;
+    // PO包量类型的推广计划, 仅允许投放PO流量
+    PO_PLAN_TYPE = 2;
+    // PO包量补量的推广计划. 此类交易偏好在上级insertion order中存在一个对应
+    // 的PO推广计划, 本计划作为其补充
+    // 注意, 此类交易偏好参与竞价, 但作为PO订单计费
+    PO_COMPLEMENT_PLAN_TYPE = 3;
+    // PD优选交易类型
+    PD_PLAN_TYPE = 4;
+}
+
+// 用来标识请求流量的所属协议
+enum RequestProtocolType {
+    UNKNOWN_PROTOCOL_TYPE = 0;
+    // http://xxx.xx.xxx/request
+    HTTP_PROTOCOL_TYPE = 1;
+    // https://xxx.xx.xxx/request
+    HTTPS_PROTOCOL_TYPE = 2;
+}

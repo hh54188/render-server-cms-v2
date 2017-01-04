@@ -1,0 +1,53 @@
+﻿
+// ========== 模版渲染服务接口对象 ==========
+// 服务客户端对象
+message ClientInfo {
+    // 客户端用户名
+    optional string clientAccount = 1;
+    // 客户端用户密码
+    optional string clientPassword = 2;
+    // 客户端本次请求的ID标示
+    optional string clientRequestId = 3;
+    // 用户浏览器的UserAgent
+    optional string userAgent = 4;
+}
+
+// 渲染服务请求对象
+message TemplateRequestInfo {
+    // 客户端信息
+    optional ClientInfo client = 1;
+    // 模板id
+    optional uint32 templateId = 2;
+    // 广告数据的JSON字符串   
+    optional string ads = 3;
+    // 广告块宽
+    optional uint32 width = 5;
+    // 广告块高
+    optional uint32 height = 6;
+}
+
+// 渲染服务返回对象
+message TemplateResponseInfo {
+    // 客户端信息, 只填充clientRequestId字段
+    optional ClientInfo client = 1;
+    // 状态码
+    enum StatusCode {
+        // 成功
+        SUCCESS = 1;
+        // 出现错误
+        ERROR = 2;
+    }
+    optional StatusCode status = 2;
+    // 错误内容明文
+    optional string error = 3;
+    // 渲染结果, 比如返回可展现的html页面内容
+    optional bytes result = 4;
+}
+// ========== //模版渲染服务接口对象 ==========
+
+// ========== 服务定义 ==========
+service TemplateService {
+    // 模板渲染服务, MessageId=0
+    rpc render(TemplateRequestInfo) returns(TemplateResponseInfo);
+}
+// ========== //服务定义 ==========

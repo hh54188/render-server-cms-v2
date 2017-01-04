@@ -1,0 +1,727 @@
+import "ad_pos_info.proto";
+import "common_types.proto";
+package rs;
+
+option cc_generic_services = true;
+
+//========== 模板渲染数据模型 ==========
+// 物料类型
+enum StuffType {
+    //图片
+    IMAGE = 100;
+    //flash
+    FLASH = 200;
+    //视频
+    VIDEO = 300;
+    //wigit
+    WIGIT = 400;
+    //文字
+    TEXT = 500;
+    //图文
+    TUWEN = 600;
+    //html
+    HTML = 700;
+    //智能创意
+    SMART = 9000;
+}
+
+// 样式类型，每种大类型用1000来分类
+enum StyleType {
+    TEXT_BASE = 1000;
+    TEXT_APP_DOWNLOAD = 1001;
+    TEXT_APP_DOWNLOAD_20_5 = 1002;
+    TEXT_APP_DOWNLOAD_6_5 = 1003;
+    TEXT_MOBILE = 1005;
+    TEXT_APP_DOWNLOAD_LBS = 1006;
+    TEXT_SDK = 1007;
+    TEXT_SDK_BANNER_BASE = 1008;
+    TEXT_SDK_BANNER_RANK = 1009;
+    TEXT_SDK_BANNER_LUNBO = 1010;
+    TEXT_SDK_BC = 1011;
+    TEXT_WAP_MDSP = 1012;
+    TEXT_WAP_MDSP_WIN = 1013;
+    TEXT_SDK_BANNER_BASE_NEW = 1014;
+    IMAGE_BASE = 2000;
+    IMAGE_APP_DOWNLOAD = 2001;
+    IMAGE_APP_DOWNLOAD_FULL = 2002;
+    IMAGE_SPLASH = 2003;
+    IMAGE_BASE_DSPAUTO=2998;
+    IMAGE_SDK_BANNER_BASE = 2004;
+    IMAGE_SDK_BANNER_ICON = 2005;
+    IMAGE_SDK = 2006;
+    IMAGE_SDK_FEED_WINDOW = 2007;
+    IMAGE_SDK_FEED_LUNBO_TITLE = 2008;
+    IMAGE_SDK_FEED_LUNBO = 2009;
+    IMAGE_FULL_SPLASH = 2010;
+    IMAGE_SPLASH_BASE = 2011;
+    IMAGE_SDK_1 = 2012;
+    IMAGE_SDK_2 = 2013;
+    IMAGE_WAP_BANNER_LUNBO = 2014;
+    IMAGE_SDK_2_1 = 2015;
+    IMAGE_SDK_BANNER_LBS = 2016;
+    IMAGE_WAP_BANNER_BASE = 2017;
+    IMAGE_GOOGLE_ADX = 2999;
+    FLASH_BASE = 3000;
+    FLASH_BASE_DSPAUTO = 3001;
+    FLASH_GOOGLE_ADX = 3999;
+    TUWEN_APP_DOWNLOAD = 4001;
+    TUWEN_APP_DOWNLOAD_20_5 = 4002;
+    TUWEN_APP_DOWNLOAD_20_2 = 4003;
+    TUWEN_APP_DOWNLOAD_6_5 = 4004;
+    TUWEN_MOBILE = 4005;
+    TUWEN_APP_ICON_DOWNLOAD = 4006;
+    TUWEN_SDK = 4007;
+    TUWEN_MOBILE_SCREEN = 4008;
+    TUWEN_SDK_BANNER_BASE = 4009;
+    TUWEN_SDK_BANNER_LUNBO = 4010;
+    TUWEN_IMAGE_TEXT_FULLLUNBO_6_5 = 4011;
+    TUWEN_IMAGE_TEXT_LUNBO_6_5 = 4012;
+    TUWEN_IMAGE_TEXT_FULLLUNBO = 4013;
+    TUWEN_BASE = 4014;
+    TUWEN_QRCODE = 4015;
+    TUWEN_APP_FULLLUNBO = 4016;
+    TUWEN_SDK_FEED = 4017;
+    TUWEN_SDK_BC = 4018;
+    TUWEN_QRCODE_TEST1 = 4019;
+    TUWEN_QRCODE_TEST2 = 4020;
+    TUWEN_IMAGE_TEXT_FULLLUNBO_BC = 4021;
+    TUWEN_QRCODE_CAR_1 = 4022;
+    TUWEN_QRCODE_CAR_2 = 4023;
+    TUWEN_APP_FULLLUNBO_6_5 = 4024;
+    TUWEN_WAP_MDSP = 4025;
+    TUWEN_WAP_GLB = 4026;
+    TUWEN_WAP_MOBILEBD = 4027;
+    TUWEN_WAP_MDSP_WIN = 4028;
+    TUWEN_WAP_FEED_IMAGE_1 = 4029;
+    TUWEN_WAP_FEED_IMAGE_2 = 4030;
+    TUWEN_WAP_FEED_BANNER_1 = 4031;
+    TUWEN_WAP_FEED_BANNER_2 = 4032;
+    TUWEN_WAP_FEED_BANNER_3 = 4033;
+    TUWEN_WAP_GLB_VIDEO = 4034;
+    TUWEN_SDK_BANNER_BASE_NEW = 4035;
+    TUWEN_WAP_FEED_BANNER_4 = 4036;
+    TUWEN_WAP_WISE = 4037;
+    TUWEN_IMAGE_TEXT_FULLLUNBO_BC_NO_BLUR = 4038;
+    TUWEN_IMAGE_TEXT_FULLLUNBO_BC_RAF = 4039;
+    TUWEN_IMAGE_TEXT_FULLLUNBO_BC_RAF_NO_BLUR = 4040;
+    VIDEO_BASE = 8000;
+    SMART_IDEA_BASE = 9000;
+    SMART_IDEA_MULTIURL = 9001;
+}
+
+// 组成广告的元素
+message AdElement {
+    // title、desc等的编码
+    enum Encoding {
+        GBK = 1;
+        UTF8 = 2;
+    }
+    optional Encoding encoding = 1;
+    // 标题
+    optional string title = 2;
+    // 描述
+    repeated string desc = 3;
+    // 监控url
+    repeated string monitorUrl = 4;
+    // 点击跳转链接
+    optional string clickUrl = 5;
+    // 跳转链接生成时间
+    optional uint32 midTime = 6;
+    // 展现url
+    optional string showUrl = 7;
+    //素材类型
+    required StuffType stuffType = 8;
+    //素材资源地址
+    optional string stuffSrc = 9;
+    //素材的宽
+    optional uint32 width = 10;
+    //素材的高
+    optional uint32 height = 11;
+    // mcurl ==> midPagecurl 二次确认点击跳转链接
+    optional string mcurl = 18;
+    // isPause ==> SDK支持下载的暂停与继续
+    optional bool isPause = 19;
+
+    // 智能创意的产品信息
+    message SmartIdeaProduct {
+        optional string clickUrl = 1;
+        optional uint32 midTime = 2;
+        optional string jsonData = 3;
+    }
+    repeated SmartIdeaProduct smartIdeaProduct = 12;
+
+    // 自定义扩充字段, 智能创意新框架可以使用此字段传递JSON数据
+    optional string extention = 13;
+    // 广告跳转类型
+    optional uint32 actionType =14;
+    // 广告跳转信息
+    message ActionTypeInfo {
+        optional string smsInfo = 1;
+        optional string telNum = 2;
+        optional string mailInfo = 3;
+    }
+    optional ActionTypeInfo actionTypeInfo = 15;
+     // 飘红词
+    optional string bid = 16;
+    // 非标准扩展内容
+    message CustomizedContent {
+        // 定制化字段，一条广告需要多条广告的时候适用
+        repeated string image = 1;
+    }
+    optional CustomizedContent customizedContent = 17;
+}
+// 设备平台  PC/手机/平板
+enum DeviceType {
+    Unknow_device = 0;
+    PC=1;
+    HIGNend_PHONE = 2;
+    TABLET = 3;
+}
+// 来自DSP的日志信息，需要通过模板打印
+message LogInfo {
+    // 用户关闭反馈
+    optional bytes closefeedback = 1;
+}
+//========== //模板渲染数据模型 ==========
+
+//========== 模版渲染服务接口对象 ==========
+//渲染服务请求对象
+message TemplateRequestInfo {
+    //客户端账号标示
+    required string account = 1;
+    // S值，内容为二进制
+    optional bytes searchId = 2;
+    // 自定义样式使用，普通样式此字段留空
+    optional string styleConfig = 3;
+    // User-Agent
+    optional string userAgent = 4;
+    // 广告块宽
+    required uint32 width = 5;
+    // 广告块高
+    required uint32 height = 6;
+    // 样式类型，不同的样式所需要的AdElement也不同
+    required StyleType styleType = 7;
+    // 组成广告的元素
+    repeated AdElement adElements = 8;
+    // 智能创意的模板id
+    optional uint32 smartIdeaTemplateId = 9;
+    // 模板id, 模板id优先级高于样式类型.
+    optional uint32 templateId = 10;
+    // 设备信息获取
+    optional uint32 DeviceType = 11;
+    // 来自DSP的日志信息，需要通过模板打印
+    optional LogInfo logInfo = 12;
+    // 用于广告反屏蔽，该域名会替换模板中的静态资源域名
+    optional string dupDomain = 13;
+	// 返回静态文件地址的协议名称
+    optional cm.RequestProtocolType protocolType = 14;
+}
+//渲染服务请求对象(样式平台)
+message StyleRequestInfo {
+    //客户端账号标示
+    required string account = 1;
+    // S值，内容为二进制
+    optional bytes searchId = 2;
+    // 自定义样式使用，普通样式此字段留空
+    optional string styleConfig = 3;
+    // User-Agent
+    optional string userAgent = 4;
+    // 广告推广类型枚举值
+    enum ActionType {
+        // Short Message 短信
+        SMS = 1;
+        // Mail 邮件
+        MAI = 2;
+        // Map 地图
+        MAP = 3;
+        // Landing Page 着陆页
+        LP = 4;
+        // Download 下载
+        DL = 5;
+        // Phone 电话
+        PH = 6;
+        // APP OPEN 唤醒app指定页面
+        APO = 7;
+        // 拍照
+        PHOTO = 8;
+        // 声音
+        SOUND = 9;
+        // Middle Page 中间页
+        MP = 10;
+        //Add-to-Calendar,添加日历
+        CALENDAR = 11;
+        ACTIONTYPE_ALL=50;
+    }
+    // 广告推广类型
+    optional ActionType actionType = 5;
+    // 广告块宽
+    required uint32 width = 6;
+    // 广告块高
+    required uint32 height = 7;
+    // 模板尺寸限制类型枚举值
+    enum SizeType {
+        // 按照像素, 举例(限制宽度为300, 高度为250): { width:300, height:250 }
+        PX = 1;
+        // 按照比例-宽度自适应, 举例(宽高比例为20:5, 宽度自适应): { width:20, height:5 }
+        SCALE = 2;
+    }
+    //模板尺寸限制类型
+    optional SizeType sizeType = 8;
+    // 样式类型，不同的样式所需要的AdElement也不同
+    required uint32 styleType = 9;
+    // 组成广告的元素
+    repeated AdElement adElements = 10;
+    // Smart Idea 样式模板数据
+    optional string smartIdeaAdData = 11;
+    // 用于广告反屏蔽，该域名会替换模板中的静态资源域名
+    optional string dupDomain = 12;
+	// 返回静态文件地址的协议名称
+    optional cm.RequestProtocolType protocolType = 13;
+}
+
+//渲染服务返回对象
+message TemplateResponseInfo {
+    // S值，内容为二进制，用于将请求和返回相对应
+    // 对于半双工的TCP client来说，可以忽略此值
+    optional bytes searchId = 1;
+    // TODO 错误码，这个需要根据渲染情况来填充
+    enum ReturnCode {
+        // 成功
+        SUCCESS = 1;
+        // 不支持
+        NOT_SUPPORT = 2;
+        // 缺失内容
+        CONTENT_MISSING = 3;
+    }
+    required ReturnCode returnCode = 2;
+    // 错误内容明文
+    optional string error = 3;
+    // 返回的可展现的html_snippet
+    optional bytes htmlSnippet = 4;
+    // 返回的实验号ID
+    repeated uint32 expIds = 5;
+}
+//========== //模版渲染服务接口对象 ==========
+
+//========== 模板管理数据模型 ==========
+
+//模板尺寸限制信息
+message TemplateSize {
+    //主键自增id
+    optional uint32 id = 1;
+    //模板id
+    optional uint32 template_id = 2;
+    //模板尺寸限制类型枚举值
+    enum SizeType {
+        //自适应, 适用于任何尺寸.
+        AUTO = 1;
+        //按照像素, 举例(限制宽度为300, 高度为250): { width:300, height:250 }
+        PX = 2;
+        //按照比例-宽度自适应, 举例(宽高比例为20:5, 宽度自适应): { width:20, height:5 }
+        SCALE = 3;
+        //限制范围-按尺寸, 举例(宽度限制200-00, 高度限制 90-115): with='200-300', height='90-115'
+        RANGE_PX = 100;
+        //限制范围-按比例, 举例(缩放比例限制在20:4到30:5之间): with='20-30', height='4-5'
+        RANGE_SCALE = 101;
+    }
+    //模板尺寸限制类型
+    optional SizeType type = 3;
+    //模板宽度限制
+    optional string width = 4;
+    //模板高度限制
+    optional string height = 5;
+}
+
+//模板缩略图表
+message Thumbnail {
+    //主键自增id
+    optional uint32 id = 1;
+    //模板id
+    optional uint32 template_id = 2;
+    //缩略图类型
+    enum ThumbnailType {
+        //模板缩略图
+        NORMAL = 1;
+        //BANNER缩略图
+        BANNER = 2;
+    }
+    //模板尺寸限制类型
+    optional ThumbnailType type = 3;
+    //图片宽度
+    optional string width = 4;
+    //图片高度
+    optional string height = 5;
+    //图片url
+    optional string url = 6;
+}
+
+//模板信息
+message Template {
+    //模板id
+    optional uint32 id = 1;
+    //样式类型. 一个样式类型可以包含多个模板ID.
+    optional uint32 style_type = 2;
+    //模板英文名
+    optional string name = 3;
+    //模板内容
+    optional string content = 4;
+    //模板缩略图集合
+    repeated Thumbnail thumbnail = 5;
+    //模板sdl
+    optional string sdl = 7;
+    //模板版本号
+    optional uint32 version = 8;
+    //模板创建时间
+    optional string create_time = 9;
+    //模板创建人的account
+    optional string create_account = 10;
+    //模板创建人的用户id, 与 create_user_platform 一起构造成联合主键
+    optional string create_user_id = 11;
+    //模板创建人的用户平台
+    optional string create_user_platform = 12;
+    //模板最后一次更新时间
+    optional string update_time = 13;
+    //模板最后一次更新的account
+    optional string update_account = 14;
+    //模板最后一次更新的用户id, 与 update_user_platform 一起构造成联合主键
+    optional string update_user_id = 15;
+    //模板最后一次更新的用户平台
+    optional string update_user_platform = 16;
+    //模板状态枚举值
+    enum TemplateStatusType {
+        //被使用
+        USED = 1;
+        //已删除
+        DELETE = 99;
+    }
+    //模板状态
+    optional TemplateStatusType status = 17;
+    //备注
+    optional string remark = 18;
+    //模板尺寸限制信息, 如果存在则表明模板可被用于何种尺寸
+    repeated TemplateSize size = 19;
+}
+//========== //模板管理数据模型 ==========
+
+//========== 服务接口参数对象 ==========
+//模板检索请求对象
+message SearchRequest {
+    //客户端账号标示
+    optional string account = 1;
+    //客户端用户平台类型, 与 user_id 字段一起构成联合主键
+    optional string user_platform = 2;
+    //客户端用户ID, 与 user_platform 字段一起构成联合主键
+    optional string user_id = 3;
+    //模板ID
+    optional uint32 template_id = 4;
+    //模板模型填充类型枚举, 指明返回的模板中带有哪些信息
+    enum TemplateModelType {
+        //返回全部属性
+        ALL = 1;
+        //列表模式, 只带有最简单的用于列表展示的数据, 不携带 sdl, size, content 和 update信息
+        LIST = 2;
+        //SDL模式, 只返回SDL, 不带有模版内容
+        SDL = 3;
+        //CONTENT模式, 只返回模板内容, 不带有SDL信息
+        CONTENT = 4;
+    }
+    //模板模型填充类型
+    optional TemplateModelType template_model_type = 5;
+    //是否返回公共模版, 默认为 false
+    optional bool with_public = 6;
+    //是否返回子模版, 默认为 false, 即默认只返回主模板
+    optional bool with_sub_template = 7;
+}
+
+//模板检索返回对象
+message SearchResponse {
+    //模板对象集合
+    repeated Template template = 1;
+    //执行状态, 1表示全部成功
+    optional uint32 status = 2;
+    //错误字符串
+    optional string error = 3;
+}
+
+//添加或更新模板请求对象, 如果模板已存在则更新
+//template对象如果不传递模板id, 则必须传递styleType字段(智能创意模版请传递9000)
+//如果template对象传递了模板id, 则以传递的模板id为准. 注意如果数据库中的模板id冲突, 可能会导致添加失败.
+message InsertUpdateRequest {
+    //客户端账号标示
+    optional string account = 1;
+    //模版对象
+    optional Template template = 2;
+    //子模板. 如果传递了子模板, 则template作为分类存在. 子模板的各个字段都可以不填写, 不填写则赋值为与主模板相同的值
+    repeated Template sub_template = 3;
+}
+
+//添加或更新模板返回对象
+message InsertUpdateResponse {
+    //执行状态, 1表示全部成功
+    optional int32 status = 1;
+    //错误字符串
+    optional string error = 2;
+    //模板Id, 如果添加或更新成功, 返回模板ID
+    optional uint32 template_id = 3;
+}
+
+//模板删除接口请求对象
+message DeleteRequest {
+    //客户端账号
+    optional string account = 1;
+    //模板ID
+    optional uint32 template_id = 2;
+}
+
+//模板删除接口返回对象
+message DeleteResponse {
+    //执行状态, 1表示全部成功
+    optional int32 status = 1;
+    //错误字符串
+    optional string error = 2;
+    //删除的条数
+    optional uint32 count = 3;
+}
+
+// 将JPG压缩为webp接口请求对象
+message WebpCompressRequest {
+    optional string account = 1;
+    optional bytes data = 2;
+}
+
+// 将JPG压缩为webp接口返回对象
+message WebpCompressResponse {
+    optional uint32 status = 1;
+    optional bytes data = 2;
+    optional string error = 3;
+}
+//========== //服务接口参数对象 ==========
+
+// ==================== 2016-模型定义 ====================//
+// 客户端对象
+message ClientInfo {
+    // DSP标示
+    optional cm.BuyerIDType dspId = 1;
+    // SSP标示
+    optional cm.SellerNetworkIDType sspId = 2;
+    // 请求id标示
+    optional bytes requestId = 3;
+    // 请求的模块标示, 可使用任意模块代号字符串
+    optional string account = 4;
+}
+
+// 状态对象
+message Status {
+    enum StatusCode {
+        // 成功
+        SUCCESS = 1;
+        // 出现错误
+        ERROR = 2;
+    }
+    // 状态码
+    optional StatusCode statusCode = 1;
+    // 详细的状态信息
+    optional string detail = 2;
+}
+
+// 尺寸对象
+message SizeInfo {
+    // 尺寸类型, 0:none, 1:像素, 2:比例, 3:自适应宽度,通栏 4:全屏,开屏类
+    optional adinfo.SizeType sizeType = 1;
+    // 数值类型
+    enum ValueType {
+        // 固定值, widthEnd, heightEnd, scaleEnd为空
+        FIXED = 1;
+        // 范围值
+        RANGE = 2;
+    }
+    optional ValueType valueType = 2;
+    // 当ValueType为FIXED时为固定宽度，当ValueType为RANGE时为宽度起始值
+    optional uint32 width = 3;
+    // 宽度结束值, 仅在 ValueType为RANGE时存在
+    optional uint32 widthEnd = 4;
+    // 当ValueType为FIXED时为固定高度，当ValueType为RANGE时为宽度起始值
+    optional uint32 height = 5;
+    // 高度结束值, 仅在 ValueType为RANGE时存在
+    optional uint32 heightEnd = 6;
+    // 比例起始值
+    optional double scale = 7;
+    // 比例结束值, 仅在 ValueType为RANGE时存在
+    optional double scaleEnd = 8;
+}
+
+// 样式对象模型
+message StyleInfo {
+    // 样式id, 一个样式由多个模板组成
+    optional uint32 styleId = 1;
+    // 样式组id, 一个样式组包含多个样式
+    optional uint32 styleGroupId = 2;
+    // 支持的尺寸对象
+    repeated SizeInfo size = 3;
+    // 支持的流量类型. 1:PC, 2:移动
+    repeated adinfo.FlowType flowType = 4;
+    // 支持的布局
+    repeated adinfo.Layout layout = 5;
+    // 支持的创意类型
+    repeated cm.CreativeType creativeType = 6;
+    // 支持的附加信息类型
+    repeated cm.AttachType attachType = 7;
+}
+
+// 创意需求模型, 描述在检索时需要检索哪些创意.
+message CreativeRequiredInfo {
+    // 创意类型
+    optional cm.CreativeType creativeType = 1;
+    // 创意宽度
+    optional uint32 width = 2;
+    // 创意高度
+    optional uint32 height = 3;
+    // 创意个数
+    optional uint32 count = 4;
+}
+
+// 设备对象
+message DeviceInfo {
+    // userAgent
+    optional string userAgent = 1;
+}
+
+// 样式配置信息
+message StyleConfigInfo {
+    // 其他扩展配置信息.某个模板特有的非公共配置放在此字段.Json格式传递.
+    optional string ext = 1;
+    // 广告位类型
+    optional cm.AdSlotType adslot_type = 2 [default = EMBEDDED];
+    // 是否启动用户关闭反馈功能
+    optional bool isShowCloseFeedBack = 3;
+    // 来自DSP的日志信息，需要通过模板将日志打印出来
+    optional LogInfo logInfo = 4;
+}
+
+// 样式配置信息
+message SdlInfo {
+    // 样式id
+    optional uint32 styleId  = 1;
+    // 尺寸信息, 不传递则返回"尺寸"汇总后的SDL
+    optional SizeInfo size = 2;
+    // 支持的流量类型. 1:PC, 2:移动,3:整合
+    optional cm.PromotionDeviceType promotionDeviceType = 3;
+    // 支持的物料类型
+    optional adinfo.Element creativeType = 4;
+    // SDL内容
+    optional bytes content = 5;
+}
+// ==================== //2016-模型定义 ====================//
+
+// ==================== 2016-接口定义 ====================//
+// 查询样式信息-请求接口对象
+message SearchStyleRequestInfo {
+    // 客户端对象
+    optional ClientInfo client = 1;
+    // 上一次查询返回的时间戳, 如果为空则返回所有样式对象
+    // 如果不为空则返回此时间戳之后有更新的样式对象
+    optional string timeStamp = 2;
+}
+
+// 查询样式信息-返回接口对象
+message SearchStyleResponseInfo {
+    // 状态对象
+    optional Status status = 1;
+    // 样式对象集合
+    repeated StyleInfo style = 2;
+    // 下次增量查询时使用的时间戳
+    optional string timeStamp = 3;
+}
+
+// 查询创意需求-请求对象
+// 查询样式id在特定尺寸下,需要的创意需求.比如: id为1的模板,在300*200的尺寸下,需要2个文字创意.
+message SearchCreativeRequestInfo {
+    // 客户端对象
+    optional ClientInfo client = 1;
+    // 样式Id
+    optional uint32 styleId = 2;
+    // 尺寸信息
+    optional SizeInfo size = 3;
+}
+
+// 查询创意需求-返回对象
+message SearchCreativeResponseInfo {
+    // 状态对象
+    optional Status status = 1;
+    // 创意需求信息
+    repeated CreativeRequiredInfo creativeRequired = 2;
+}
+
+// 渲染服务-请求对象
+message RenderRequestInfo {
+    // 客户端信息
+    optional ClientInfo client = 1;
+    // 样式id
+    optional uint32 styleId  = 2;
+    // 尺寸信息
+    optional SizeInfo size = 3;
+    // 设备信息
+    optional DeviceInfo device = 4;
+    // 广告数据的JSON字符串
+    optional string ads = 5;
+    // 样式配置信息
+    optional StyleConfigInfo styleConfig = 6;
+    // 用于广告反屏蔽，该域名会替换模板中的静态资源域名
+    optional string dupDomain = 7;
+    // 返回静态文件地址的协议名称
+    optional cm.RequestProtocolType protocolType = 8;
+}
+
+// 渲染服务-返回对象
+message RenderResponseInfo {
+    // 状态对象
+    optional Status status = 1;
+    // 客户端信息
+    optional ClientInfo client = 2;
+    // 渲染结果, 比如返回可展现的html页面内容
+    optional bytes result = 3;
+}
+
+// SDL查询接口-请求对象
+message SearchSdlRequestInfo{
+    // 客户端信息
+    optional ClientInfo client = 1;
+    // SDL查询条件
+    optional SdlInfo sdl = 2;
+}
+
+// SDL查询接口-返回对象
+message SearchSdlResponseInfo{
+    // 状态对象
+    optional Status status = 1;
+    // SDL对象
+    repeated SdlInfo sdl = 2;
+}
+
+// ==================== //2016-接口定义 ====================//
+
+// ====================  服务定义 ====================
+service RenderService {
+    //模板渲染服务, MessageId=0
+    rpc search(TemplateRequestInfo) returns(TemplateResponseInfo);
+    //模板渲染服务, MessageId=1
+    rpc style_render(StyleRequestInfo) returns(TemplateResponseInfo);
+    //模板查询接口, MessageId=100 && 2
+    rpc search_template(SearchRequest) returns(SearchResponse);
+    //模板添加或更新接口, MessageId=101 && 3
+    rpc insert_update_template(InsertUpdateRequest) returns(InsertUpdateResponse);
+    //模板删除接口, MessageId=102 && 4
+    rpc delete_template(DeleteRequest) returns(DeleteResponse);
+    //将JPG压缩为webp接口, MessageId=200 && 5
+    rpc convert_to_webp(WebpCompressRequest) returns(WebpCompressResponse);
+    // 2016-样式模板查询接口, MessageId=6
+    rpc search_style(SearchStyleRequestInfo) returns(SearchStyleResponseInfo);
+    // 2016-创意需求查询接口, MessageId=7
+    rpc search_creative(SearchCreativeRequestInfo) returns(SearchCreativeResponseInfo);
+    // 2016-模板渲染服务, MessageId=8
+    rpc render(RenderRequestInfo) returns(RenderResponseInfo);
+    // 2016-SDL查询接口, MessageId=9
+    rpc search_sdl(SearchSdlRequestInfo) returns(SearchSdlResponseInfo);
+}
+// ====================  //服务定义 ====================
+

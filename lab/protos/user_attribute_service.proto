@@ -1,0 +1,45 @@
+﻿// Copyright 2013 Baidu Inc. All rights Reserved.
+
+// UAP服务API
+
+import "common_types.proto";
+
+package cm;
+
+option cc_generic_services = true;
+
+message UserAttributeRequest {
+    // search id，采用bytes是为了未来升级兼容，例如8bytes->16bytes
+    optional bytes id = 1;
+
+    // 百度用户ID，必须提供这个信息
+    required string baidu_user_id = 2;
+    // 完整的百度域cookie信息
+    optional string full_cookie = 3;
+
+}
+
+message UserAttributeResponse {
+
+    // 来自用户历史上搜索行为的关键词
+    repeated Keyword query_keyword = 1;
+    // 来自用户历史上网页浏览行为的关键词
+    repeated Keyword webpage_keyword = 2;
+
+    // 来自it原算法的用户分类结果
+    repeated Category it_category = 3;
+    // 来自it新算法的用户分类结果
+    repeated Category it2_category = 4;
+    // 来自bt算法的用户分类结果
+    repeated Category bt_category = 5;
+
+    // 用户性别
+    optional Gender gender = 6;
+
+    // 用户年龄
+    optional Age age = 7;
+}
+
+service UserAttributeService {
+    rpc search (UserAttributeRequest) returns (UserAttributeResponse);
+}

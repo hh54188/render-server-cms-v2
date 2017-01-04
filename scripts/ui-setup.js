@@ -5,3 +5,11 @@ $('.dropdown').dropdown({
         console.log(value, text, $choice);
     }
 });
+
+$('.file-label').mouseover(function () {
+    var $tip = $(this).find('.file-label-tip');
+    $tip.css('display', 'inline');
+}).mouseout(function (event) {
+    var $tip = $(this).find('.file-label-tip');  
+    $tip.css('display', 'none');
+})

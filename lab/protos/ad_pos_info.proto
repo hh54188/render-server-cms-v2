@@ -1,0 +1,614 @@
+﻿import "common_types.proto";
+package adinfo;
+
+/**********基础层级部分************/
+// 第一层级，广告框层级,id字段在数据库表上表达
+message Placement {
+    optional Basic basic = 1;// 基础属性
+    optional Container container = 2;// 容器
+    optional Context context = 3;// 广告位上下文，主要服务移动广告位
+    optional Complement complement = 4;// 补余
+}
+
+// 第二层级，变现诉求,id字段在数据库表上表达
+message BidInfo {
+    optional BidLevel bidLevel = 1 [default = PUBLICAUCTION];// 变现方式
+    optional FillStyle fillStyle = 2;// 开放变现（非直投类）方式下，媒体会有创意诉求表达。  
+    optional string orderId = 3;// 订单id
+    repeated int32 wdsps = 4;// DSP白名单
+    optional int32 orderCpm = 5;// 订单CPM,单位分
+}
+
+// 第三层级，品牌保护,id字段在数据库表上表达
+message Protect {
+    optional int32 price = 1;// 全局底价
+    optional bool vulgar = 2;// 是否过滤低俗
+    repeated int32 bdsps = 3;// DSP黑名单
+    repeated string badvertiser = 4;// 广告主黑名单
+    repeated int32 bindustrys = 5;// 行业黑名单
+    repeated Element belements = 6;// 物料黑名单
+    repeated string bwords = 7;// 关键词黑名单
+}
+/**************************************/
+// 任务
+message Task {
+    optional int32 taskId = 1; // 任务id
+    optional TaskType taskType = 2 [default = TASKTYPE_UNKNOWN]; // 任务类型
+    optional int32 qrFreq = 3; // 二维码频控
+    optional int32 cashBackRate = 4; // 返现比例，从广告主付费预算中拿出多少比例返还用户 
+}
+
+message Container {
+    optional int32 height = 1;// 高 DEPRECATED, DO NOT USE!
+    optional int32 width = 2;// 宽 DEPRECATED, DO NOT USE!
+    optional SizeType sizeType = 3 [default = PIXEL];// 尺寸类型
+    optional AnchoredType anchoredType = 4 [default = QIANRU];// 定位类型
+    optional Location location = 5 [default = LOCATION_NONE];// 定位位置
+    optional Occurrence occurrence = 6 [default = OCCURRENCE_NONE];// 展现时机，（超前）APP的广告位没进来，贴片广告位的展示时机需要用户在代码里控制
+    optional CloseType closeType = 7 [default = SELF];// 关闭类型
+    optional int32 loopNumber = 8;// 轮播数，对应DAN的轮播广告
+    optional Floated floated = 9;// 悬浮
+    optional Slide slide = 10;// 侧滑
+    optional int32 loopTime = 11;// 轮播广告单次播放时间，单位s
+    optional Animation animation = 12 [default = SHADOW];// (超前)APP容器展示动画
+    optional Shape shape = 13 [default = SHAPE_NONE];// (超前)容器形状，APP使用
+    optional int32 closeTime = 14;// 自动关闭时间，单位s
+    optional string cCornerMark = 15;// 角标颜色
+    optional Button preBtn = 16;// 前链按钮
+}
+
+message FillStyle {
+    repeated Element elements = 1;// 元素 DEPRECATED, DO NOT USE!
+    repeated Layout layout = 2;// 布局
+    optional string backgroundColor = 3;// 背景颜色
+    optional int32 opacity = 4;// 透明度
+    optional Flush flush = 5 [default = FLUSH_NONE];// 是否闪动
+    repeated int32 styleTemplateId = 6;// （超前）原生自定义用户模板，native广告填充
+    optional Txt txt = 7;// 文本物料
+    optional Lu lu = 8;// 连接单元物料
+    optional Video video = 9;// 视频物料
+    optional Search search = 10;// 搜索框物料
+    optional CloudTheme cloudTheme = 11;// **废弃**，非标标签云主题,相关属性放入LU属性内  
+    repeated ActionType act = 12;// APP广告动作类型
+    optional Nativead nativead = 13;// app原生广告定义 DEPRECATED, DO NOT USE!
+    optional int32 actConfirm = 15;// 对应action是否需要提示确认框，采用位图的方式表达，1标示需要确认。从末尾到高位：下载动作确认
+    optional bool needCache = 16;// 创意是否缓存
+    optional int32 btnStyleId = 17;// 按钮图标效果
+    optional int32 adNum = 18; // 广告个数，样式轮播数量
+    optional StyleType styleType = 19 [default = RTB]; // 样式分类
+    optional bool showBaiduLogo = 20 [default = true]; // 是否展示baidu的logo
+    // COA情况下
+    // 媒体可以篡改一些属性,如W,H....
+    // 是否忽略COA方式设置的这些样式表达
+    // ignoreCOASetting??????????
+    // ignore all (all==COA+Union)
+    // 
+    // ignoreCOA, ignoreUnion, ignoreAll ??????
+    //
+    //
+    optional IgnoreStyleMode ignoreStyleMode = 21 [default = UNKNOWN]; // 竞价是否忽略样式
+    // 
+    // 背景 : 4个新原生样式推广
+    // 媒体一定会选中其中一个新原生样式, 由于新原生样式推出时间较短，供应量不足，所以允许媒体选择是否允许竞价，以免收入下降
+    //
+    // 1. 新增wStyleTemplateId，用于表达允许出的特色样式白名单；
+    // 2. 当StyleTemplateId有具体值时，则表达指定只能出的某个样式；
+    // 3. ADX将允许出的特色样式，与普通Elements中的样式在同一个字段中表达给外部DSP，举例如下：
+    //      3.1 媒体只要原生样式，则：Elements=图文，WStyleType=原生A，StyleTemplateID=原生A，ADX向DSP表达要的样式：原生A；
+    //      3.2 媒体表达要原生A，也可以出普通样式，则：Elements=图文、图片、文字…，WStyleType=原生A，StyleTemplateID=Null，
+    //          ADX向DSP表达要的样式：图文、文字、图片、原生A；
+    // 4. 特色样式所对应的物料元素，需要ADX作校验
+    //
+    // case-1 : 媒体不允许竞价, 媒体要且只要原生A.
+    // wStyleTemplateId=原生A && styleTemplateId=原生A, 仅仅使用styleTemplateId, 无视wStyleTemplateId, 不竞价. 正常来说这2个属性值一定是相同的
+    // 
+    // case-2 : 媒体允许竞价, 此时媒体期望要原生A，但也可以出普通样式
+    // wStyleTemplateId=原生A && styleTemplateId=null, 使用wStyleTemplateId, 同时也支持'图文/文字/图片'一同竞价
+    //
+    optional int32 wStyleTemplateId = 22;
+}
+
+message Button {
+    optional string imgUrl = 1;// 图片url
+    // 请使用cm.MaterialFormat，稍后会下掉Format
+    optional Format imgFormat = 2[default=JPG];// 图片格式
+    optional cm.MaterialFormat imgMatFormat = 3 [default = IMAGE_JPG];// 图片格式
+}
+
+message Nativead {
+    enum Fields {
+        NATIVE_TITLE = 1;// 标题
+        NATIVE_DESC = 2;// 内容描述
+        NATIVE_IMAGE = 4; // 主题图
+        NATIVE_ICON = 8; // 图标logo
+        NATIVE_APPSIZE = 16;// app大小
+        NATIVE_ACTIONTYPE = 32; // 跳转动作
+        NATIVE_VIDEO = 64; // 视频
+    }
+    repeated int64 requiredFields = 1;// 按照位图设置相应的位为1，不需要请求的位保持0  
+    optional TxtEle title = 2;// 标题
+    optional TxtEle desc = 3;// 描述
+    optional ImageEle logoIcon = 4;// 广告主logo
+    optional ImageEle screenShot = 5;// 主题图
+    optional Landing landing = 6;// 跳转动作
+    optional int32 screenShotNum = 7;// 主题图数量
+    optional int32 adNum = 8; // 一次返回的广告数量
+}
+
+message Landing {
+    optional ActionType landAct = 1 [default = ACTIONTYPE_NONE];// 跳转动作
+    optional string tmpKey = 2;// 发布商模板中land变量
+}
+
+message TxtEle {
+    optional int32 maxWord = 1;// 最大字数
+    optional string tmpKey = 2;// 发布商模板中的word变量
+}
+
+message ImageEle {
+    optional int32 width = 1;// 宽
+    optional int32 height = 2;// 高
+    optional Shape shape = 3 [default = SHAPE_NONE];// 形状
+    optional string tmpKey = 4;// 发布商模板中的img变量
+    optional string cbackground = 5;// 背景颜色
+}
+
+message Search {
+    optional bool iss = 1;// 是否站内搜索
+    optional bool instan = 2;// 是否开启划词搜索
+    optional Location luPos = 3 [default = LOCATION_NONE];// lu推荐词位置
+}
+
+message Video {
+    optional string time = 1;// 播放时长，单位s
+    optional int32 delay = 2;// 播放延迟，单位s
+    optional string renderUrl = 3;// 视频插件地址，渲染现在只能依赖swf文件进行前端渲染
+    optional Resolution resolution = 4 [default = P1080];// (超前)分辨率
+    // 请使用cm.MaterialFormat，稍后会下掉Format
+    optional Format format = 5 [default = MP4];// (超前)文件格式
+    optional int32 number = 6;// 视频广告数量
+    repeated ConnectionType requireConType = 7; // 请求视频要求的网络环境
+    optional int32 maxFileSize = 8; // 视频文件的大小限制，单位KB
+    repeated cm.MaterialFormat materialFormat = 9 [packed=true];// (超前)文件格式
+}
+
+message Lu {
+    optional int32 number = 1;// Lu推词个数
+    optional int32 borderWidth = 2;// lu边框宽度
+    optional int32 stid = 3;// 标签云样式id
+    optional CloudSkin skin = 4 [default = QX1];// 标签云皮肤
+}
+
+message Txt {
+    optional int32 number = 1;// （超前）文本词个数，服务于APP的信息流广告，目前APP还没有接入
+    optional string ctitle = 2;// 标题颜色
+    optional string cdesc = 3;// 描述内容颜色
+    optional string curl = 4;// url颜色
+    optional string cborder = 5;// 边框颜色
+    optional string cbackground = 6;// 背景颜色
+    optional string fontName = 7;// 字体名称
+    optional int32 fontSize = 8;// 字体大小
+    optional Align align = 9 [default = ALIGN_LEFT];// 对其方式
+    optional TxtSkin txtSkin = 10 [default = TXTSKIN_NONE];// 文字皮肤
+    optional string cflush = 11;// 闪烁颜色
+    optional string btitle = 12;// （超前）标题加粗，检索系统默认值
+    optional int32 bborder = 13;// 边框粗细
+    optional ImageEle logoIcon = 14;// 广告主logo
+    optional ImageEle downloadBtn = 15;// 下载按钮
+    optional int32 titleFontSize = 16;// 标题字体大小
+    optional string foreword = 17;// 流量端引导词内容
+    optional string forewordFontName = 18;// 流量端引导词字体
+    optional string cforeword = 19;// 流量端引导词颜色
+}
+
+// **废弃**
+message CloudTheme {
+    optional int32 stid = 1;// 标签云样式id
+    optional CloudSkin skin = 2 [default = QX1];// 标签云皮肤
+}
+
+message Basic {
+    optional SspId sspId = 1 [default = SSPID_NONE];// sspid
+    optional int64 userId = 2;// 用户ucid
+    optional FlowType flowType = 3 [default = PC];// 容器对应流量类型
+    optional string cname = 4;// 计费名
+    optional int64 tuId = 5;// 广告位id
+    optional int64 adBlockId = 6;// 位置id
+    optional SellType sellType = 7 [default = SELLTYPE_NONE];// 售卖方式，兼容历史数据
+    optional ReqSrc reqSrc = 8 [default = JSDUP];// 请求方式
+    optional int32 groupId = 9;// 分组id
+    optional RspFormat rspFormat = 10 [default = HTML];// 数据返回格式
+    optional string appSid = 11;// (仅APP使用)广告位ID绑定的appsid
+    optional int32 status = 12;// 状态 0正常，1停用
+    optional ConBackEnv conBackEnv = 13 [default = CBE_BROWSER];// 容器所在背景环境
+}
+
+message Floated {
+    optional int32 absPosL = 1;// 悬浮绝对位置，left坐标
+    optional int32 absPosT = 2;// 悬浮绝对位置，top坐标
+    optional DockType dockType = 3 [default = BROWSER];// 悬浮贴边方式
+    optional int32 vspace = 4;// 悬浮相对位置，距离顶部、或者底部的距离
+    optional int32 hspace = 5;// 悬浮相对位置，距离左侧、或者右侧的距离
+    optional int32 contw = 6;// 内容页宽度
+    optional Follow follow = 7 [default = FOLLOW_NONE];// 悬浮跟随方式
+    optional int32 clientw = 8;// 悬浮展示要求的流量器宽度
+    optional int32 closeTime = 9;// 自动关闭时间，单位s
+    optional BlockType blockType = 10 [default = WINDOW];// 悬浮组件类型
+    optional Trigger trigger = 11 [default = READY];// （超前）触发方式，目前悬浮只支持页面加载触发
+}
+
+message Slide {
+    optional Direction direction = 1 [default = DIRECTION_NONE];// 扩展方向
+    optional Trigger DEPRECATED_trigger = 2 [default = READY];// 触发方式
+    repeated Trigger trigger = 11; // 触发方式
+    optional double outPercent = 3;// 划出页面百分比
+    optional double inPercent = 4;// 缩进页面百分比
+    optional int32 slideWidth = 5;    // 扩展后宽度
+    optional int32 slideHeight = 6;   // 扩展后高度
+    optional int32 extendTime = 7;    // 扩展效果播放时间,5s，10s，15s
+    optional Location location = 8 [default = LOCATION_NONE];   // 扩展悬浮广告位置,服务于停靠类扩展
+    optional SlideMode slideMode = 9 [default = SHOVE];      // 扩展方式
+    optional SizeType slideSizeType = 10 [default = PIXEL];  // 扩展后尺寸类型
+}
+
+message Context {
+    optional string userDefine = 1;// 用户自定义参数,业务端决定的cpro_template保存在这里
+    optional Emotion emotion = 2 [default = EMOTION_NONE];// （超前）APP情绪广告使用
+    repeated string kwords = 3;// （超前）APP触发关键词
+    optional cm.AdSlotType adSlotType = 5 [default = EMBEDDED]; // 广告位类型，标准化不维护其中的内容，内容由PM维护，业务端负责填写，不对其中的正确性负责。wiki地址：http: // wiki.baidu.com/pages/viewpage.action?pageId=141622148
+    optional Task task = 8; // 任务信息
+}
+
+message Complement {
+    optional ComplementType type = 1 [default = COMPLEMENTTYPE_NONE];// 补余类型
+    optional string url = 2;// 补余url
+    optional string code = 3;// 第三方代码,无意义
+    optional CloudSkin cloudSkin = 4 [default = QX1];// 标签云皮肤，无意义
+    optional int64 bidInfoId = 5;// 网盟补余的竞价诉求id
+    optional string color = 6;// 纯色补余使用的颜色，无意义
+}
+
+// 0表示UNKNOWN, 这样的情况一般是根据老逻辑走
+// 1表示根据媒体样式表达式来选广告; 2表示无视媒体样式表达式，全量竞价
+enum IgnoreStyleMode {
+    UNKNOWN = 0;
+    CONSIDER_STYLE = 1;
+    IGNORE_STYLE = 2;
+}
+
+// 请使用cm.MaterialFormat，稍后会下掉Format
+enum Format {
+    //视频部分
+    MP4 = 1;// MOV格式
+    FLV = 2;// FLV格式
+    AVI = 3;// AVI格式
+    
+    //图片部分
+    JPG = 4;// jpg格式
+    GIF = 5;// gif动态图
+}
+
+enum Resolution {
+    P1080 = 1;// D5,1080P,水平1080线，逐行扫描
+    P720 = 2;// D4,720P,水平720线，逐行扫描
+    P480 = 3;// D2,480P,水平480线，逐行扫描
+}
+
+enum Align {
+    ALIGN_LEFT = 1;// 左对齐
+    ALIGN_CENTER = 2;// 居中
+    ALIGN_RIGHT = 3;// 右对齐
+}
+
+enum RspFormat {
+    RSPFORMAT_NONE = 0;
+    HTML = 1;// html格式
+    JSON = 2;// json格式
+    JSONP = 3;// 触发jsonp
+    XML = 4;// xml格式
+}
+
+enum TxtSkin {
+    TXTSKIN_NONE = 0;
+    MBL_WHITE_RED = 1;
+    MBL_GRAY_BLACK = 2;
+    MBL_WHITE_BLUE = 3;
+    MBL_BLACK_WHITE = 4;
+    MBL_YELLOW_BLUE = 5;
+    MBL_GREEN_WHITE = 6;
+    MBL_BLUE_WHITE = 7;
+    MBL_WHITE_BLACK = 8;
+}
+
+enum Flush {
+    FLUSH_NONE = 0;// 不闪烁
+    WHOLE = 1;// 整体闪烁
+    TITLE = 2;// 不建议使用，标题闪烁
+    DESCRIPTION = 3;// 不建议使用，内容闪烁
+}
+
+enum Layout {
+    // 废弃
+    CLOUDGRID = 3;// 标签云 DEPRECATED
+
+    // 有效
+    SINGLE = 1;// 独占
+    GRID = 2;// 网格，三分，排行榜，标签云等
+    NAV = 4;// 导航，橱窗，轮播
+    WALL = 5;// app墙类布局
+    L_NATIVE = 6;// 原生布局，自定义布局
+}
+
+enum Element {
+    TEXT = 0;// 文字
+    IMAGE = 1;// 图片
+    FLASH = 2;// flash
+    WIDGET = 3;// 交互控件
+    TEXT_WITH_AN_ICON = 4;// 图文
+    LINKUNIT_WORD = 5;// lu文字，兼容现有逻辑，未来要废弃，并入文字
+    OLD_HTML = 6;// 未来要废弃，需要清理代码
+    VIDEO = 7;// 视频
+    SEARCH = 8;// 搜索框
+    RICH_HTML = 9;// 富媒体HTML
+    RICH_MEDIA = 10;// 秋实富媒体
+    SMART = 11;// （超前）目前没有测试过智能创意
+    LINKUNIT_IMG = 12;// lu图片，兼容现有逻辑，未来要废弃，并入图片
+    ALL = 50;// 所有
+    ELEMENT_NONE = 51; // DEPRECATED only for bfp, coa_bug
+}
+
+enum BidLevel {
+    ORDER = 1;// 直销订单
+    PRIVATEAUCTION = 2;// 私有竞价
+    PUBLICAUCTION = 3;// 共有竞价
+}
+
+/**流量来源**/
+enum FlowType {
+    PC = 1;// PC流量
+    MBL = 2;// 移动流量
+}
+
+/**容器背景环境**/
+enum ConBackEnv {
+    CBE_BROWSER = 1;// 浏览器
+    CBE_APP = 2;// 应用
+    CBE_PLAYER = 3;// 播放器
+}
+
+enum SellType {
+    SELLTYPE_NONE = 0;
+    SSP_NORMAL = 1;// SSP和ADM的流量都使用这个类型
+    UN_NORMAL = 2;// 网盟竞价
+    ADM_DANBAODUAN = 3;// 鸿媒体包段
+    ADM_PASSDAN = 4;// 广告管家优质
+    UN_PASSDAN = 5;// 网盟优质
+}
+
+enum ReqSrc {
+    JSDUP = 1;// 标准js
+    ASFLASH = 2;// flash请求
+    JSXML = 3;// 非标js
+    MBLSDK = 4;// （超前）APP移动sdk
+    SERVERAPI = 5;// server端API请求
+}
+
+enum SspId {
+    SSPID_NONE = 0;
+    UNION = 1;// 网盟
+    QIUSHI = 2;// 秋实
+    ADM = 6;// 广告管家
+    BESC = 7;// BESC
+    SSP = 8;// PCSSP
+    MSSP = 9; // Mobile SSP
+}
+
+enum SizeType {
+    SIZETYPE_NONE = 0;
+    PIXEL = 1;// 像素
+    SCALE = 2;// 比例（移动设备）
+    AUTO_WIDTH = 3;// （超前）自适应宽度，通栏
+    FULL_SCREEN = 4;// （超前）全屏，开屏类广告
+    SCALE_CONTAINER= 5 ;// 按父容器缩放
+}
+
+// 初始状态
+enum AnchoredType {
+    ANCHOREDTYPE_NONE = 0;
+    // 废弃
+    XUANTING = 2;// 悬停，嵌入改悬浮，废弃 DEPRECATED
+    GUANLIAN_WENZI = 5;// 内文上，废弃
+    GUANLIAN_TUPIAN = 6;// 图片上，废弃
+    GUANLIAN_SHIPIN = 4;// 视频上,废弃
+    LEGACY = 8; // 暂时提供，避免mssp创建代码位出错
+    TANCHUANG = 12; // DEPRECATED
+
+
+    // 平铺式广告(非阻塞，不会阻塞用户阅读)
+    QIANRU = 1;// 嵌入框
+    XUANFU = 3;// 悬浮框
+    QIANRUANNIU = 9;// 嵌入按钮
+    XUANFUANNIU = 10;// 悬浮按钮
+    YINCANG = 11;// 隐藏
+
+    // 插入式广告（阻塞，会阻塞用户阅读）
+    CHAPING = 7;// 插屏框(开屏，阅读插屏)
+}
+
+enum Location {
+    LOCATION_NONE = 0;
+    MID = 1;// 中（超前）APP使用，插屏形式
+    UP = 2;// 上
+    DOWN = 3;// 下
+    LEFT = 4;// 左
+    RIGHT = 5;// 右
+    BOTH = 6; // 两侧,对联形式
+    UPLEFT = 7;// 左上
+    UPRIGHT = 8;// 右上
+    DOWNLEFT = 9;// 左下
+    DOWNRIGHT = 10;// 右下
+}
+
+// 容器展示时机
+enum Occurrence {
+    OCCURRENCE_NONE = 0;
+    // 视频贴片类插入点
+    BEGIN = 1;// 视频开始
+    SUSPEND = 2;// 视频暂停
+    END = 3;// 视频结束
+
+    // app类插入点
+    NEXTPAGE = 4;// 小说阅读类换页时展示
+    OPEN = 5;// 开屏
+    INSTREAM = 6;// 信息流
+
+    // 图加
+    IMGLOAD = 7;// 图片加载
+
+    // 内文
+    HOVERWORD = 8;// 悬浮文字上
+}
+
+enum CloseType {
+    SELF = 1;// 仅关闭当前页面该推广位
+    SESSION = 2;// 关闭同session下该推广位
+    COOKIE = 3;// （超前）关闭同COOKIE下该推广位
+    NOT = 4;// （超前）没有关闭按钮
+}
+
+enum DockType {
+    PAGE = 1;// 提内容页边，向里贴边
+    BROWSER = 2;// 贴浏览器边，向外贴边
+}
+
+enum Follow {
+    FOLLOW_NONE = 0;
+    ALWAYS = 1;// 始终悬浮
+    CONTENT = 2;// 随页面内容显示而显示
+}
+
+enum BlockType {
+    SIDE = 1;// 侧栏
+    BUTTON = 2;// 按钮
+    WINDOW = 3;// 视窗
+}
+
+enum Trigger {
+    BEFORE_PAGELOAD = 1;// 页面加载时
+    AFTER_PAGECLOSE = 2;// 页面关闭时
+    PAGE_PERCENT = 3;// 页面浏览百分比
+    MOUSEHOVER = 4;// 鼠标悬停
+    CLICK = 5;// 鼠标点击
+    READY = 6;// 广告位广告加载完毕时
+    SLIP = 7;// app手指滑动屏幕
+    OVERSCREEN = 8; // 超出屏幕，用于悬停
+}
+
+enum Direction {
+    DIRECTION_NONE = 0;
+    SLIDE_UP = 1;// （超前）向上
+    SLIDE_DOWN = 2;// （超前）向下
+    SLIDE_LEFT = 3;// 向左
+    SLIDE_RIGHT = 4;// 向右
+    SLIDE_FULLSCREEN = 5;// 全屏扩展
+}
+
+enum Emotion {
+    EMOTION_NONE = 0;
+    HAPPY = 1;// 高兴
+    SAD = 2;// 悲伤
+}
+
+enum ComplementType {
+    COMPLEMENTTYPE_NONE = 0;// 不补余
+    URL = 1;// url补余，代码位
+    CAD = 2;// 公益补余，代码位
+    BLOCK = 3;// 留白，代码位
+    TRD_CODE = 4;// 第三方代码，投放项
+    CLOUD = 5;// 标签云补余，去掉
+    BID = 6;// 公开竞价补余，投放项
+    CLOSE = 7;// 关闭广告框，代码位
+}
+
+enum CloudSkin {
+    // 纯净CJ,清新QX,华丽HL
+    QX1 = 1;
+    QX9 = 9;
+    QX10 = 10;
+    QX11 = 11;
+    QX12 = 12;
+    
+    CJ3 = 3;
+    CJ4 = 4;
+    CJ5 = 5;
+    CJ6 = 6;
+    CJ8 = 8;
+    
+    HL2 = 2;
+    HL13 = 13;
+    HL15 = 15;
+    HL16 = 16;
+}
+
+enum ActionType {
+    ACTIONTYPE_NONE = 0;// 没有点击动作
+    SMS = 1;// Short Message，短信
+    MAI = 2;// Mail，邮件
+    MAP = 3;// Map，地图
+    LP = 4;// Landing Page，着陆页
+    DL = 5;// Download，下载
+    PH = 6;// Phone，电话
+    APO = 7;// APP OPEN，唤醒app指定页面
+    PHOTO = 8;// 拍照
+    SOUND = 9;// 声音
+    MP = 10;// Middle Page,中间页
+    CALENDAR = 11;// Add-to-Calendar,添加日历
+    REWARD_DOWNLOAD = 12; // 积分下载
+    BIZBRIDGE=13; // 商桥
+    CASHBACK_DOWNLOAD=14; // 返现下载
+    ACTIONTYPE_ALL = 50;
+}
+
+enum Animation {
+    SHADOW = 1;// 渐显
+    JUMP = 2;// 上跳
+    ROTATE = 3;// 翻牌
+}
+
+enum Shape {
+    SHAPE_NONE = 0;
+    RECT = 1;// 矩形
+    ROUND = 2;// 圆形
+    ARCH = 3;// 半圆
+}
+
+enum SlideMode {
+    COVER = 1;// 悬浮覆盖
+    SHOVE = 2;// 推开
+}
+
+enum StyleType {
+    RTB = 1; // 标准RTB,不做任何要求
+    NON_CUSTOMIZATION = 2; // 非定制样式，传统广告网络广告
+    CUSTOMIZATION = 3; // 定制化样式，原生广告
+}
+
+// 任务类型
+enum TaskType {
+    TASKTYPE_UNKNOWN = 0; 
+    DOWNLOAD_CASHBACK = 1; //下载返现
+    COUPON = 2; //优惠券
+}
+
+// 网络连接类型
+enum ConnectionType {
+    CONNECTION_UNKNOWN = 0; // 无法探测当前网络状态
+    CELL_UNKNOWN = 1; // 蜂窝数据接入，未知网络类型
+    CELL_2G = 2; // 蜂窝数据2G网络
+    CELL_3G = 3; // 蜂窝数据3G网络
+    CELL_4G = 4; // 蜂窝数据4G网络
+    CELL_5G = 5; // 蜂窝数据5G网络
+    WIFI = 100; // Wi-Fi网络接入
+    ETHERNET = 101; // 以太网接入
+    NEW_TYPE = 999;  // 未知新类型
+};

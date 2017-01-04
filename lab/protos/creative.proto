@@ -1,0 +1,188 @@
+﻿import "ad_pos_info.proto";
+import "common_types.proto";
+
+package cm;
+
+// 创意类型以及交互动作类型，均使用ad_pos_info.proto中的Element以及ActionType定义
+// 创意类型：0-文本，1-图片，2-Flash，4-图文，7-视频
+// 交互动作类型：0-无交互动作，1-短信，4-跳转，6-电话
+
+// 设备类型，均使用common_types.proto中的PromotionDeviceType定义
+// 设备类型：1-PC，2-移动，3-整合营销
+
+// 图片来源：0-本地上传，1-霓裳导入
+enum ImageSourceType { 
+    LOCAL              = 0;
+    RAINBOW            = 1;
+}
+
+message ClickLink {
+    optional bytes clickLink        = 1;  // 点击串
+    optional uint64 antiCheating    = 2;  // 反作弊参数
+}
+
+// 数据来源：1-静态（用户输入），2-动态（数据挖掘）
+enum DataType { 
+    NATIVE             = 1;
+    DYNAMIC            = 2;
+}
+
+// 跳转交互动作，整合营销必填PC跳转，选填移动跳转
+message ForwardAction {
+    optional bytes pcClickLink        = 1;    // PC点击链接：设备类型为2时无效，设备类型为1或者3时必填
+    optional bytes mobileClickLink    = 2;    // 移动点击链接，设备类型为1时无效，为2时必填，为3时选填
+    optional bytes targetPage         = 3;    // 目标页地址
+    repeated bytes monitorLinks       = 4;    // 监测链接，最多支持三个
+    optional ClickLink clickLink      = 5;    // 点击串，检索端和render server需要，业务端暂时无用
+    optional bytes title              = 6;    // 链接标题
+    optional uint32 attachInfoId      = 7;    // 附加信息ID，为了兼容渲染现有北斗附加信息创意使用
+}
+
+// 电话
+message PhoneAction {
+    optional bytes phoneNumber         = 1;    // 电话号码
+    optional bytes traceUrl            = 2;    // 检查是否存在电话/发短信动作时的点击串
+    optional uint32 attachInfoId       = 3;    // 附加信息ID，为了兼容渲染现有北斗附加信息创意使用
+}
+
+// 短信
+message MessageAction {
+    optional bytes messageNumber       = 1;    // 短信号码
+    optional bytes messageContent      = 2;    // 短信内容
+    optional bytes traceUrl            = 3;    // 检查是否存在电话/发短信动作时的点击串
+    optional uint32 attachInfoId       = 4;    // 附加信息ID，为了兼容渲染现有北斗附加信息创意使用
+}
+
+// 无交互动作
+message NoneAction {
+    optional bool noneAction        = 1[default = true];    // 无交互动作
+}
+
+// 商桥交互动作
+message BizBridgeAction {
+    optional bytes traceUrl            = 1;    // 检查是否存在电话/发短信动作时的点击串
+    optional uint32 attachInfoId       = 2;    // 附加信息ID，为了兼容渲染现有北斗附加信息创意使用
+}
+
+// 交互动作主体：必选其一，一般情况下，设备类型为PC时支持跳转，为移动时支持跳转/电话/短信/无
+message MainAction {
+    optional adinfo.ActionType actionType         = 1;    // 交互动作类型：0-无交互动作，1-短信，4-跳转，6-电话，13-商桥
+    optional bytes actionTypeMessageName          = 2;    // 交互动作类型对应内容的名字："forward"，"phone"，"message"，"none"，"bizBridge"
+    optional bytes actionTypeMessageClass         = 3;    // 交互动作类型对应内容的类名："ForwardAction"，"PhoneAction"，"MessageAction"，"NoneAction"，"BizBridgeAction"
+    optional ForwardAction forward                = 4;    // 跳转链接
+    optional PhoneAction phone                    = 5;    // 电话，设备类型为移动时有效
+    optional MessageAction message                = 6;    // 短信，设备类型为移动时有效
+    optional NoneAction none                      = 7;    // 无后续动作，设备类型为移动时有效
+    optional BizBridgeAction bizBridge            = 8;    // 商桥
+    optional DataType dataType                    = 99;   // 当交互动作为副交互动作时，链接类型可以考虑为动态挖掘，即动态子链
+}
+
+// 文件占位符，主要是指JPG、GIF、SWF、MP4、AVI、MPEG、MOV、FLV等文件
+message FilePlaceholder {
+    optional string fileSrc        = 1;    // 文件占位符信息，%%BEGIN_MEDIA%%mediaid=101%%END_MEDIA%%
+    optional uint64 mediaId        = 2;    // 多媒体id，即在ubmc中的多媒体id
+    optional string fileMd5        = 3;    // 文件md5
+    optional uint64 fileSize       = 4;    // 文件大小，单位字节
+}
+
+// 文本物料
+message TextMaterial {
+    optional bytes creativeName        = 1;    // 名称，用户识别该创意
+    optional bytes creativeTitle       = 2;    // 标题
+    optional bytes creativeDesc1       = 3;    // 描述1
+    optional bytes creativeDesc2       = 4;    // 描述2，推广方式为移动时可忽略
+}
+
+// 图文物料
+message TextWithIconMaterial {
+    optional bytes creativeName        = 1;    // 名称，用户识别该创意
+    optional bytes creativeTitle       = 2;    // 标题
+    optional bytes creativeDesc1       = 3;    // 描述1
+    optional bytes creativeDesc2       = 4;    // 描述2，推广方式为移动时可忽略
+    optional FilePlaceholder file      = 5;    // 图标，占位符
+    optional uint32 width              = 6;    // 宽
+    optional uint32 height             = 7;    // 高
+}
+
+// 图片物料
+message ImageMaterial {
+    optional bytes creativeName              = 1;    // 名称，用户识别该创意
+    optional FilePlaceholder file            = 2;    // 图片，占位符
+    optional uint32 width                    = 3;    // 宽
+    optional uint32 height                   = 4;    // 高
+    optional ImageSourceType imageSource     = 5;    // 图片来源：0-本地上传，1-霓裳导入
+    optional uint64 rainbowTemplateId        = 6;    // 霓裳模板id
+}
+
+// flash物料
+message FlashMaterial {
+    optional bytes creativeName        = 1;    // 名称，用户识别该创意
+    optional FilePlaceholder file      = 2;    // flash，占位符
+    optional uint32 width              = 3;    // 宽
+    optional uint32 height             = 4;    // 高
+}
+
+// 视频物料
+message VideoMaterial {
+    optional bytes creativeName                          = 1;    // 名称，用户识别该创意
+    optional FilePlaceholder file                        = 2;    // 视频，占位符
+    optional uint32 width                                = 3;    // 宽
+    optional uint32 height                               = 4;    // 高
+    optional uint32 videoBitRate                         = 5;    // 视频码率，单位kbps
+    optional uint32 videoLen                             = 6;    // 视频时长，单位秒
+    optional double videoRealLen                         = 7;    // 视频真实时长，单位秒
+}
+
+// 文本创意
+message TextCreative {
+    optional TextMaterial material            = 1;    // 文本物料
+    optional MainAction action                = 2;    // 交互动作
+    repeated MainAction additionalAction      = 3;    // 附加交互动作
+}
+
+// 图文创意
+message TextWithIconCreative {
+    optional TextWithIconMaterial material    = 1;    // 图文物料
+    optional MainAction action                = 2;    // 交互动作
+    repeated MainAction additionalAction      = 3;    // 附加交互动作
+}
+
+// 图片创意
+message ImageCreative {
+    optional ImageMaterial material           = 1;    // 图片物料
+    optional MainAction action                = 2;    // 交互动作
+    repeated MainAction additionalAction      = 3;    // 附加交互动作
+}
+
+// flash创意
+message FlashCreative {
+    optional FlashMaterial material           = 1;    // flash物料，仅支持PC流量
+    optional MainAction action                = 2;    // 交互动作，flash仅支持跳转链接
+    repeated MainAction additionalAction      = 3;    // 附加交互动作
+}
+
+// 视频创意
+message VideoCreative {
+    repeated VideoMaterial material           = 1;    // 视频物料，最多2份，第一份外审，第二份内审
+    optional MainAction action                = 2;    // 交互动作，视频仅支持跳转链接和无交互动作
+}
+
+// 创意主体，业务端使用
+message MainCreative {
+    optional uint32 creativeTemplateId           = 1;    // 创意模板ID
+    optional PromotionDeviceType deviceType      = 2;    // 设备类型：1-PC，2-移动，3-整合营销
+    optional adinfo.Element creativeType         = 3;    // 创意类型：0-文本，1-图片，2-Flash，4-图文，7-视频
+    optional bytes creativeTypeMessageName       = 4;    // 创意类型对应内容的名字："text"，"image"，"flash"，"textWithIcon"，"video"
+    optional bytes creativeTypeMessageClass      = 5;    // 创意类型对应内容的类名："TextCreative"，"ImageCreative"，"FlashCreative"，"TextWithIconCreative"，"VideoCreative"
+    optional TextCreative text                   = 6;    // 文本创意
+    optional ImageCreative image                 = 7;    // 图片创意
+    optional FlashCreative flash                 = 8;    // flash创意
+    optional TextWithIconCreative textWithIcon   = 9;    // 图文创意
+    optional VideoCreative video                 = 10;   // 视频创意
+    optional uint32 audit_mode                   = 99[default = 3];   // 审核模式，AuditMode组合，默认kAd_MACHINE | kAd_HUMAN, ad_review_service.proto中定义
+}
+
+// 创意主体，包含多个创意，主要用于检索端与render server交互
+message MainCreatives {
+    repeated MainCreative mainCreatives        = 1;    // 多个创意
+}

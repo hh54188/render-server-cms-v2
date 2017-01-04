@@ -61,6 +61,12 @@ function getClassicTemplateRequestFilePath(templateName, requestInfoName) {
 
 module.exports = {
 	updateRenderServerBasic: updateRenderServerBasic,
+	updateRenderServerDirName: function (name) {
+		renderServerDirName = name;
+	},
+	updateProductionFlag: function (val) {
+		isProduction = val;
+	},
 	getRenderServerDirName: function () {
 		return renderServerDirName;
 	},

@@ -1,6 +1,13 @@
 - 把 get_config_state 当作query分离出来
 
-# 设计思路(Event sourcing + virtual dom algo + bigpipe/pjax)
+## 设计思路02
+
+数据我们可以从两个维度分为两类
+
+1. 来自用户的操作驱动/外界驱动
+2. 
+
+## 设计思路01 (Event sourcing + virtual dom algo + bigpipe/pjax)
 
 这个应用包含很多子应用，基本上每一个tab标签就是一个子应用。可以说每一个应用都有自己的架构。所以简单来说，这个app就是我的实验室（lab），我的试验田（test field）。
 
@@ -13,10 +20,6 @@ View层的基层框架使用的是Vue.js，这是一个MVVM框架，但它和Rea
 ## app-config
 
 这是一个很简单的应用，几乎没有业务逻辑，简单来说就是把一个配置选项列表，映射到一个表单中。如果对表单做了修改，则同步回文件。
-
-我不知道怎么
-
-
 
 
 ## 目前需要解决的问题：

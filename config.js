@@ -1,4 +1,4 @@
 {
-	"render_server_folder": "render-server",
-	"production": false
+    "render_server_folder": "render-server",
+    "production": false
 }
