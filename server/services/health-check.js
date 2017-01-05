@@ -1,11 +1,20 @@
 var fs = require('fs');
 var rsPath = require('../global-services/rs-path-classic.js');
+var PubSub = require('pubsub-js');
+var loopService = require('../global-services/loop.js');
 require('node-oojs');
 
 var ERROR_PROTO_STYLETYPE_NUMBER_DUPLICATE = 1;
 var ERROR_PROTO_STYLETYPE_NAME_DUPLICATE = 2;
+
 var ERROR_STYLETYPE_FILE_NUMBER_DUPLICATE = 3;
 var ERROR_STYLETYPE_FILE_NAME_DUPLICATE = 4;
+
+var ERROR_PROTO_VS_STYLETYPE_NAME_NOT_MATCH = 5;
+var ERROR_PROTO_VS_STYLETYPE_NUMBER_NOT_MATCH = 6;
+
+var ERROR_PROTO_VS_PROTO_NAME_NOT_MATCH = 7;
+var ERROR_PROTO_VS_PROTO_NUMBER_NOT_MATCH = 8;
 
 Object.prototype.values = function (obj) {
 	var _values = [];
@@ -39,6 +48,17 @@ function findDuplicateItemInArray(arr) {
 		}
 	});
 	return duplicateItems;
+}
+
+function reverseObjValueAndKey(obj, oldKeyProcessFn, oldValueProcessFn) {
+	var newObj = {};
+	for (var oldKey in obj) {
+		var oldValue = obj[oldKey];
+		oldKey = oldKeyProcessFn ? oldKeyProcessFn(oldKey) : oldKey;
+		oldValue = oldValueProcessFn ? oldValueProcessFn(oldValue) : oldValue;
+		newObj[oldValue] = oldKey;
+	}
+	return newObj;
 }
 
 // 判断两个set里的元素是不是一致的
@@ -128,12 +148,29 @@ function rsProtoSelfCheck(protoPath) {
 	var duplicateStyleTypeNumbers = findDuplicateItemInArray(numbers);
 	var duplicateStyleTypeNames = findDuplicateItemInArray(names);
 
-	return [{
-		errorCode: 0,
-		duplicateStyleTypeNames: duplicateStyleTypeNames,
-		duplicateStyleTypeNumbers: duplicateStyleTypeNumbers,
-		filePaths: [protoPath]
-	}];
+	var result = [];
+
+	if (duplicateStyleTypeNumbers.length) {
+		result.push({
+			errorCode: ERROR_PROTO_STYLETYPE_NUMBER_DUPLICATE,
+			details: {
+				duplicateStyleTypeNumbers: duplicateStyleTypeNumbers
+			},
+			filePaths: [protoPath]			
+		});
+	}
+
+	if (duplicateStyleTypeNames.length) {
+		result.push({
+			errorCode: ERROR_PROTO_STYLETYPE_NAME_DUPLICATE,
+			details: {
+				duplicateStyleTypeNames: duplicateStyleTypeNames
+			},
+			filePaths: [protoPath]
+		});
+	}
+
+	return result;
 }
 
 // 对 styleType.js 文件进行检查
@@ -149,13 +186,43 @@ function styleTypeSelfCheck(inProduction) {
 	var duplicateStyleTypeNames = findDuplicateItemInArray(names);
 	var duplicateStyleTypeNumbers = findDuplicateItemInArray(numbers);
 	var path = inProduction ? styleTypeFileInProduction : styleTypeFileInDevelopment;
+
+	var result = [];
+
+	if (duplicateStyleTypeNumbers.length) {
+		result.push({
+			errorCode: ERROR_STYLETYPE_FILE_NUMBER_DUPLICATE,
+			details: {
+				duplicateStyleTypeNumbers: duplicateStyleTypeNumbers
+			},
+			filePaths: [path]			
+		});
+	}
+
+	if (duplicateStyleTypeNames.length) {
+		result.push({
+			errorCode: ERROR_STYLETYPE_FILE_NAME_DUPLICATE,
+			details: {
+				duplicateStyleTypeNames: duplicateStyleTypeNames
+			},
+			filePaths: [path]
+		});
+	}
 	
-	return [{
-		errorCode: 0,
-		duplicateStyleTypeNames: duplicateStyleTypeNames,
-		duplicateStyleTypeNumbers: duplicateStyleTypeNumbers,
-		filePaths: [path]
-	}];
+	return result;
+}
+
+function subArrayIsEmpty(arr) {
+	var flag = true;
+
+	arr.forEach(function (subArr) {
+		if (subArr.length) {
+			flag = false;
+			return;
+		}
+	});
+
+	return flag;
 }
 
 // 同一个目录下（不能交叉目录）的多个文件的交叉比较
@@ -174,12 +241,29 @@ function protoVSproto(protoPathA, protoPathB) {
 	var diffsOfNames = compareSets(namesA, namesB);
 	var diffsOfNumbers = compareObjectValues(styleTypeObjA, styleTypeObjB);
 
-	return [{
-		errorCode: 0,
-		diffNames: diffsOfNames,
-		diffNumbers: diffsOfNumbers,
-		filePaths: [protoPathA, protoPathB]
-	}];
+	var result = [];
+
+	if (!subArrayIsEmpty(diffsOfNumbers)) {
+		result.push({
+			errorCode: ERROR_PROTO_VS_PROTO_NUMBER_NOT_MATCH,
+			details: {
+				diffNumbers: diffsOfNumbers
+			},
+			filePaths: [protoPathA, protoPathB]
+		});
+	}
+
+	if (!subArrayIsEmpty(diffsOfNames)) {
+		result.push({
+			errorCode: ERROR_PROTO_VS_PROTO_NAME_NOT_MATCH,
+			details: {
+				diffNames: diffsOfNames
+			},
+			filePaths: [protoPathA, protoPathB]
+		});
+	}
+
+	return result;
 }
 
 // 检测 rs.proto 与 styleType.js 的 styleType 是否匹配 (x2)
@@ -187,45 +271,103 @@ function protoVSproto(protoPathA, protoPathB) {
 function protoVSstyletype(protoPath, styleTypeInProduction) {
 	var styleTypeObjFromProto = getProtoStyleTypeObject(protoPath);
 	var styleTypeObjFromJS = getJSStyleTypeObject(styleTypeInProduction);
-
+	
+	// TEXT_BASE = 1000;
 	var namesFromProto = Object.keys(styleTypeObjFromProto);
+	// int1001: 'TEXT_APP_DOWNLOAD'
 	var namesFromJS = Object.values(styleTypeObjFromJS);
-		return key.replace('int', '');
-	});
 
 	var diffsOfNames = compareSets(namesFromProto, namesFromJS);
+	styleTypeObjFromJS = reverseObjValueAndKey(styleTypeObjFromJS, function (oldKey) {
+		return oldKey.replace('int', '');
+	});
 	var diffsOfNumbers = compareObjectValues(styleTypeObjFromProto, styleTypeObjFromJS);
 	var styleTypeFilePath = rsPath.getStyleTypeFilePath(styleTypeInProduction);
 
-	return [{
-		errorCode: 0,
-		diffNames: diffsOfNames,
-		diffNumbers: diffsOfNumbers,
-		filePaths: [protoPath, styleTypeFilePath]
-	}]
+	var result = [];
+
+	if (!subArrayIsEmpty(diffsOfNames)) {
+		result.push({
+			errorCode: ERROR_PROTO_VS_STYLETYPE_NAME_NOT_MATCH,
+			details: {
+				diffNames: diffsOfNames
+			},
+			filePaths: [protoPath, styleTypeFilePath]
+		});
+	}
+
+	if (!subArrayIsEmpty(diffsOfNumbers)) {
+		result.push({
+			errorCode: ERROR_PROTO_VS_STYLETYPE_NUMBER_NOT_MATCH,
+			details: {
+				diffNumbers: diffsOfNumbers
+			},
+			filePaths: [protoPath, styleTypeFilePath]
+		});
+	}
+
+	return result;
 }
 
-function main() {
+var healthState = null;
+
+function check() {
 	var interfaceProtoInDevelopment = rsPath.getInterfaceProtoPath();
-	var protocolProtoInDevelopment = rsPath.getInterfaceProtoPath();
+	var protocolProtoInDevelopment = rsPath.getProtocolProtoPath();
 	
 	var interfaceProtoInProduction = rsPath.getInterfaceProtoPath(true);
 	var protocolProtoInProduction = rsPath.getProtocolProtoPath(true);
 
-	var r1 = rsProtoSelfCheck(interfaceProtoInDevelopment);
-	var r2 = rsProtoSelfCheck(protocolProtoInDevelopment);
-	var r3 = styleTypeSelfCheck(false);
-	var r4 = protoVSproto(interfaceProtoInDevelopment, protocolProtoInDevelopment);
-	var r5 = protoVSstyletype(interfaceProtoInDevelopment, false);
-	var r6 = protoVSstyletype(protocolProtoInDevelopment, false);
+	var developmentErrors = [];
+	var productionErrors = [];
+	var tempResult;
 
-	// console.log(r1);
-	// console.log(r2);
-	// console.log(r3);
-	// console.log(r4);
-	console.log(r5[0].diffNames);
+	function assembly(total, result) {
+		if (result.length) {
+			total = total.concat(result);
+		}
+		return total;		
+	}
+
+	developmentErrors = assembly(developmentErrors, rsProtoSelfCheck(interfaceProtoInDevelopment));
+	developmentErrors = assembly(developmentErrors, rsProtoSelfCheck(protocolProtoInDevelopment));
+	developmentErrors = assembly(developmentErrors, styleTypeSelfCheck(false));
+	developmentErrors = assembly(
+		developmentErrors, 
+		protoVSproto(interfaceProtoInDevelopment, protocolProtoInDevelopment)
+	);
+	developmentErrors = assembly(developmentErrors, protoVSstyletype(interfaceProtoInDevelopment, false));
+	developmentErrors = assembly(developmentErrors, protoVSstyletype(protocolProtoInDevelopment, false));
+
+	productionErrors = assembly(productionErrors, rsProtoSelfCheck(interfaceProtoInProduction));
+	productionErrors = assembly(productionErrors, rsProtoSelfCheck(protocolProtoInProduction));
+	productionErrors = assembly(productionErrors, styleTypeSelfCheck(true));
+	productionErrors = assembly(
+		productionErrors, 
+		protoVSproto(interfaceProtoInProduction, protocolProtoInProduction)
+	);
+	productionErrors = assembly(productionErrors, protoVSstyletype(interfaceProtoInProduction, true));
+	productionErrors = assembly(productionErrors, protoVSstyletype(protocolProtoInProduction, true));
+
+	return {
+		developmentErrors: developmentErrors,
+		productionErrors: productionErrors
+	}
 }
 
-// setInterval(function () {
+function main () {
+	var tempHealthState = check();
+	// 如果健康状况和之前的不一致
+	// 代表出现了问题
+	if (JSON.stringify(healthState) != JSON.stringify(tempHealthState)) {
+		healthState = tempHealthState;
+		// PubSub.publish('')
+	}
+}
+
+healthState = check();
+console.log(JSON.stringify(healthState, null, 4));
+
+loopService.add(function () {
 	main();
-// }, 1000 * 1)
+}.bind(this));
