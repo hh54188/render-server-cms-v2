@@ -18,6 +18,9 @@
             .text-button {
                 padding: 0 5px;
             }
+            .cursor-pointer {
+                cursor: pointer;
+            }
             .file-label {
                 cursor: pointer;
                 display: inline-block;
@@ -151,6 +154,15 @@
                         </div>
                         <div class="ui bottom attached tab segment active" data-tab="health">
                             <div class="ui form panel-health">
+                                <div class="ui info message">
+                                    <div class="header">
+                                        <span>温馨提示</span>
+                                    </div>
+                                    <ul class="list">
+                                        <li><span>点击文件名可复制文件路径</span></li>
+                                        <li><span>点击问题名可查看问题详情</span></li>
+                                    </ul>
+                                </div>
                                 <h4 class="ui dividing header"><span>开发目录</span></h4>
                                 <table class="ui basic celled table">
                                     <thead class="full-width">
@@ -162,84 +174,33 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in localize(errors.developmentErrors)">
-                                            <td v-if="item.errorCode === 1">
-                                              A
+                                            <td>
+                                                <label v-if="item.errorCode === 1 || item.errorCode === 3" class="ui label black cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板代码出现不一致</span>
+                                                </label>
+                                                <label v-else-if="item.errorCode === 2 || item.errorCode === 4" class="ui label orange cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板名出现重复</span>
+                                                </label>
+                                                <label v-else-if="item.errorCode === 5 || item.errorCode === 7" class="ui label yellow cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板名出现不一致</span>
+                                                </label>
+                                                <label v-else-if="item.errorCode === 6 || item.errorCode === 8" class="ui label black cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板代码出现不一致</span>
+                                                </label>                                                  
                                             </td>
-                                            <td v-else-if="item.errorCode === 2">
-                                              B
-                                            </td>
-                                            <td v-else-if="item.errorCode === 3">
-                                              C
-                                            </td>
-                                            <td v-else>
-                                              Not A/B/C
-                                            </td>
-                                            <td class="center aligned" v-bind:colspan="item.filePaths.length == 1 ? 2 : 1" v-for="name in item.fileNames">
+                                            <td class="center aligned" v-bind:colspan="item.filePaths.length == 1 ? 2 : 1" v-for="(name, index) in item.fileNames">
                                                 <div class="file-label">
-                                                    <span>
+                                                    <span v-bind:data-clipboard-text="item.filePaths[index]" class="copy-btn">
                                                         <i class="file outline icon"></i>
                                                         <span>{{name}}</span>    
                                                     </span>
-                                                    <!-- <div class="ui left pointing label file-label-tip">
-                                                        <a class="text-button">复制路径</a>
-                                                        <a>|</a>
-                                                        <a class="text-button">同步至右侧</a>
-                                                    </div> -->
                                                 </div>
                                             </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="ui label red">
-                                                    <i class="refresh icon"></i>
-                                                    <span>styleType 不一致</span>
-                                                </label>
-                                            </td>
-                                            <td class="collapsing">
-                                                <div class="file-label">
-                                                    <span>
-                                                        <i class="file outline icon"></i><span>interface/rs.proto</span>    
-                                                    </span>
-                                                    <div class="ui left pointing label file-label-tip">
-                                                        <a class="text-button">复制路径</a>
-                                                        <a>|</a>
-                                                        <a class="text-button">同步至右侧</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="collapsing">
-                                                <div class="file-label">
-                                                    <span>
-                                                        <i class="file outline icon"></i><span>interface/rs.proto</span>    
-                                                    </span>
-                                                    <div class="ui left pointing label file-label-tip">
-                                                        <a class="text-button">复制路径</a>
-                                                        <a>|</a>
-                                                        <a class="text-button">同步至右侧</a>
-                                                    </div>
-                                                </div>                                        
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label class="ui label yellow">
-                                                    <i class="refresh icon"></i>
-                                                    <span>styleType重复</span>
-                                                </label>
-                                            </td> 
-                                            <td class="collapsing center aligned" colspan="2">
-                                                <div class="file-label">
-                                                    <span>
-                                                        <i class="file outline icon"></i><span>interface/rs.proto</span>    
-                                                    </span>
-                                                    <div class="ui left pointing label file-label-tip">
-                                                        <a class="text-button">复制路径</a>
-                                                        <a>|</a>
-                                                        <a class="text-button">同步至右侧</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>                                       
+                                        </tr>                                      
                                     </tbody>
                                     <!-- <tfoot class="full-width">
                                         <tr>
@@ -248,7 +209,52 @@
                                         </tr>
                                     </tfoot> -->
                                 </table>
-
+                                <h4 class="ui dividing header"><span>production目录</span></h4>
+                                <table class="ui basic celled table">
+                                    <thead class="full-width">
+                                        <tr>
+                                            <th class="four wide"><span>当前问题</span></th>
+                                            <th><span>文件名称A</span></th>
+                                            <th><span>文件名称B</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="item in localize(errors.productionErrors)">
+                                            <td>
+                                                <label v-if="item.errorCode === 1 || item.errorCode === 3" class="ui label black cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板代码出现不一致</span>
+                                                </label>
+                                                <label v-else-if="item.errorCode === 2 || item.errorCode === 4" class="ui label orange cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板名出现重复</span>
+                                                </label>
+                                                <label v-else-if="item.errorCode === 5 || item.errorCode === 7" class="ui label yellow cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板名出现不一致</span>
+                                                </label>
+                                                <label v-else-if="item.errorCode === 6 || item.errorCode === 8" class="ui label black cursor-pointer">
+                                                    <i class="warning icon"></i>
+                                                    <span>模板代码出现不一致</span>
+                                                </label>                                                  
+                                            </td>
+                                            <td class="center aligned" v-bind:colspan="item.filePaths.length == 1 ? 2 : 1" v-for="(name, index) in item.fileNames">
+                                                <div class="file-label">
+                                                    <span v-bind:data-clipboard-text="item.filePaths[index]" class="copy-btn">
+                                                        <i class="file outline icon"></i>
+                                                        <span>{{name}}</span>    
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>                                      
+                                    </tbody>
+                                    <!-- <tfoot class="full-width">
+                                        <tr>
+                                            <th colspan="4">
+                                            </th>
+                                        </tr>
+                                    </tfoot> -->
+                                </table>                            
                             </div>
                         </div>
                         <div class="ui bottom attached tab segment" data-tab="manage">
@@ -506,7 +512,7 @@
             </div>    
         </div>
         <script type="text/javascript" src="./scripts/global.js"></script>
-        <!-- <script type="text/javascript" src="./scripts/socketio-setup.js"></script> -->
+        <script type="text/javascript" src="./scripts/socketio-setup.js"></script>
         <script type="text/javascript" src="./scripts/clipboard-setup.js"></script>
         <script type="text/javascript" src="./scripts/services/diff-object.js"></script>
         <script type="text/javascript" src="./scripts/services/remote.js"></script>

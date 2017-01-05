@@ -15,12 +15,12 @@ var appHealth = new Vue({
                         ]
                     },
                     "filePaths": [
-                        "..\\render-server\\interface\\rs.proto",
-                        "..\\render-server\\src\\rs\\common\\model\\styleType.js"
+                        "D:\\Work\\render-server\\interface\\rs.proto",
+                        "D:\\Work\\render-server\\src\\rs\\common\\model\\styleType.js"
                     ]
                 },
                 {
-                    "errorCode": 5,
+                    "errorCode": 1,
                     "details": {
                         "diffNames": [
                             [
@@ -30,7 +30,7 @@ var appHealth = new Vue({
                         ]
                     },
                     "filePaths": [
-                        "..\\render-server\\interface\\rs.proto"
+                        "D:\\Work\\render-server\\src\\rs\\common\\model\\styleType.js"
                     ]
                 },                
                 {
@@ -44,8 +44,8 @@ var appHealth = new Vue({
                         ]
                     },
                     "filePaths": [
-                        "..\\render-server\\src\\rs\\api\\protocol\\rs.proto",
-                        "..\\render-server\\src\\rs\\common\\model\\styleType.js"
+                        "D:\\Work\\render-server\\src\\rs\\api\\protocol\\rs.proto",
+                        "D:\\Work\\render-server\\src\\rs\\common\\model\\styleType.js"
                     ]
                 }
             ],
@@ -61,8 +61,8 @@ var appHealth = new Vue({
                         ]
                     },
                     "filePaths": [
-                        "..\\render-server\\production\\interface\\rs.proto",
-                        "..\\render-server\\production\\src\\rs\\common\\model\\styleType.js"
+                        "D:\\Work\\render-server\\production\\interface\\rs.proto",
+                        "D:\\Work\\render-server\\production\\src\\rs\\common\\model\\styleType.js"
                     ]
                 },
                 {
@@ -76,8 +76,8 @@ var appHealth = new Vue({
                         ]
                     },
                     "filePaths": [
-                        "..\\render-server\\production\\src\\rs\\api\\protocol\\rs.proto",
-                        "..\\render-server\\production\\src\\rs\\common\\model\\styleType.js"
+                        "D:\\Work\\render-server\\production\\src\\rs\\api\\protocol\\rs.proto",
+                        "D:\\Work\\render-server\\production\\src\\rs\\common\\model\\styleType.js"
                     ]
                 }
             ]
@@ -106,4 +106,8 @@ var appHealth = new Vue({
             return [pathSegments[length - 2], pathSegments[length - 1]].join('\\');
         }
     }
+});
+
+PubSub.subscribe('health', function (eventName, newState) {
+    appHealth.errors = newState;
 });

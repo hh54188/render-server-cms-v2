@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var rsPath = require('../global-services/rs-path-classic.js');
 var PubSub = require('pubsub-js');
 var loopService = require('../global-services/loop.js');
@@ -156,7 +157,7 @@ function rsProtoSelfCheck(protoPath) {
 			details: {
 				duplicateStyleTypeNumbers: duplicateStyleTypeNumbers
 			},
-			filePaths: [protoPath]			
+			filePaths: [path.resolve(protoPath)]
 		});
 	}
 
@@ -166,7 +167,7 @@ function rsProtoSelfCheck(protoPath) {
 			details: {
 				duplicateStyleTypeNames: duplicateStyleTypeNames
 			},
-			filePaths: [protoPath]
+			filePaths: [path.resolve(protoPath)]
 		});
 	}
 
@@ -185,7 +186,7 @@ function styleTypeSelfCheck(inProduction) {
 	var numbers = Object.keys(styleTypeObj);
 	var duplicateStyleTypeNames = findDuplicateItemInArray(names);
 	var duplicateStyleTypeNumbers = findDuplicateItemInArray(numbers);
-	var path = inProduction ? styleTypeFileInProduction : styleTypeFileInDevelopment;
+	var jsPath = inProduction ? styleTypeFileInProduction : styleTypeFileInDevelopment;
 
 	var result = [];
 
@@ -195,7 +196,7 @@ function styleTypeSelfCheck(inProduction) {
 			details: {
 				duplicateStyleTypeNumbers: duplicateStyleTypeNumbers
 			},
-			filePaths: [path]			
+			filePaths: [path.resolve(jsPath)]			
 		});
 	}
 
@@ -205,7 +206,7 @@ function styleTypeSelfCheck(inProduction) {
 			details: {
 				duplicateStyleTypeNames: duplicateStyleTypeNames
 			},
-			filePaths: [path]
+			filePaths: [path.resolve(jsPath)]
 		});
 	}
 	
@@ -249,7 +250,7 @@ function protoVSproto(protoPathA, protoPathB) {
 			details: {
 				diffNumbers: diffsOfNumbers
 			},
-			filePaths: [protoPathA, protoPathB]
+			filePaths: [path.resolve(protoPathA), path.resolve(protoPathB)]
 		});
 	}
 
@@ -259,7 +260,7 @@ function protoVSproto(protoPathA, protoPathB) {
 			details: {
 				diffNames: diffsOfNames
 			},
-			filePaths: [protoPathA, protoPathB]
+			filePaths: [path.resolve(protoPathA), path.resolve(protoPathB)]
 		});
 	}
 
@@ -292,7 +293,7 @@ function protoVSstyletype(protoPath, styleTypeInProduction) {
 			details: {
 				diffNames: diffsOfNames
 			},
-			filePaths: [protoPath, styleTypeFilePath]
+			filePaths: [path.resolve(protoPath), path.resolve(styleTypeFilePath)]
 		});
 	}
 
@@ -302,7 +303,7 @@ function protoVSstyletype(protoPath, styleTypeInProduction) {
 			details: {
 				diffNumbers: diffsOfNumbers
 			},
-			filePaths: [protoPath, styleTypeFilePath]
+			filePaths: [path.resolve(protoPath), path.resolve(styleTypeFilePath)]
 		});
 	}
 
@@ -361,13 +362,19 @@ function main () {
 	// 代表出现了问题
 	if (JSON.stringify(healthState) != JSON.stringify(tempHealthState)) {
 		healthState = tempHealthState;
-		// PubSub.publish('')
+		PubSub.publish('HEALTH_STATE_UPDATED');
 	}
 }
 
 healthState = check();
-console.log(JSON.stringify(healthState, null, 4));
+// console.log(JSON.stringify(healthState, null, 4));
 
 loopService.add(function () {
 	main();
 }.bind(this));
+
+module.exports = {
+	getHealth: function () {
+		return healthState;
+	}
+}

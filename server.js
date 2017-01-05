@@ -25,9 +25,17 @@ PubSub.subscribe('PUSH_CONFIG_STATE', function (eventName, newState) {
 	globalSocket.emit('PUSH_CONFIG_STATE', newState);
 });
 
+PubSub.subscribe('PUSH_HEALTH_STATE', function (eventName, newState) {
+	if (!globalSocket) {
+		return;
+	}
+	globalSocket.emit('PUSH_HEALTH_STATE', newState);
+});
+
 io.on('connection', function connectionHandler(socket) {
 	globalSocket = socket;
 	socket.on('COMMAND', function (commandInfo) {
+		console.log('command--->', commandInfo);
 		CommandManager.process(commandInfo);
 	});
 });

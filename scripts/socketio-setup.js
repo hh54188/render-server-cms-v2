@@ -17,4 +17,8 @@
 		PubSub.publish('config.new', newState);
 	});
 
+	socket.on('PUSH_HEALTH_STATE', function (newState) {
+		PubSub.publish('health', newState);
+	});
+
 })();
