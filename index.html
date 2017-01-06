@@ -28,37 +28,48 @@
             .label.file-label-tip {
                 display: none;
             }
+            .no-round-radius {
+                border-radius: 0!important;
+            }
+            .no-border {
+                border: none!important;
+            }
+            .no-shadow {
+                box-shadow: none!important;
+            }
+            .position-fixed {
+                position: fixed!important;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 999;
+            }
+            .hide {
+                display: none!important;
+            }
         </style>
     </head>
     <body>
+        <div id="notification" style="display: none;" class="ui message yellow small no-round-radius no-border position-fixed no-shadow">
+            <p>This is a special notification which you can dismiss if you're bored with it.</p>
+        </div>
         <div class="ui grid container centered">
-            <div class="ui modal">
-                <i class="close icon"></i>
-                <div class="header">
-                    Profile Picture
+            <div class="row"></div>
+            <!-- <div class="row">
+                <div class="column">
+                    <h2 class="ui dividing header">
+                        <span>Render Server可视化工具</span>
+                    </h2>
                 </div>
-                <div class="image content">
-                    <pre>
-                        <code class="language-css">
-                        </code>
-                    </pre>
-                </div>
-                <div class="actions">
-                    <div class="ui black deny button">
-                        Nope
-                    </div>
-                    <div class="ui positive right labeled icon button">
-                        Yep, that's me
-                        <i class="checkmark icon"></i>
-                    </div>
-                </div>
-            </div>        
+            </div> -->  
             <div class="row"></div>
             <div class="row">
                 <div class="column">
                     <div id="container">
                         <div class="ui top attached tabular menu">
-                            <a class="item" data-tab="config"><span>管理Render Server配置</span> </a>
+                            <a class="item" data-tab="config">
+                                <span>管理Render Server配置</span>
+                            </a>
                             <a class="active item" data-tab="health"><span>自检</span> </a>
                             <a class="item" data-tab="manage"><span>管理模板</span></a>
                             <a class="item" data-tab="insert"><span>添加旧模板</span></a>
@@ -164,7 +175,11 @@
                                     </ul>
                                 </div>
                                 <h4 class="ui dividing header"><span>开发目录</span></h4>
-                                <table class="ui basic celled table">
+                                <a v-show="!errors.developmentErrors.length" class="ui label green">
+                                    <span>一切正常</span>
+                                    <i class="checkmark icon"></i>
+                                </a>
+                                <table v-show="errors.developmentErrors.length" class="ui basic celled table">
                                     <thead class="full-width">
                                         <tr>
                                             <th class="four wide"><span>当前问题</span></th>
@@ -210,7 +225,11 @@
                                     </tfoot> -->
                                 </table>
                                 <h4 class="ui dividing header"><span>production目录</span></h4>
-                                <table class="ui basic celled table">
+                                <a v-show="!errors.productionErrors.length" class="ui label green">
+                                    <span>一切正常</span>
+                                    <i class="checkmark icon"></i>
+                                </a>
+                                <table v-show="errors.productionErrors.length" class="ui basic celled table">
                                     <thead class="full-width">
                                         <tr>
                                             <th class="four wide"><span>当前问题</span></th>
@@ -512,6 +531,7 @@
             </div>    
         </div>
         <script type="text/javascript" src="./scripts/global.js"></script>
+        <script type="text/javascript" src="./scripts/notify-setup.js"></script>
         <script type="text/javascript" src="./scripts/socketio-setup.js"></script>
         <script type="text/javascript" src="./scripts/clipboard-setup.js"></script>
         <script type="text/javascript" src="./scripts/services/diff-object.js"></script>

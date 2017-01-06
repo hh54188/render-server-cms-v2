@@ -1,86 +1,12 @@
+
+
 var appHealth = new Vue({
     el: '.panel-health',
     data: {
         text: 'Hello World',
         errors: {
-            "developmentErrors": [
-                {
-                    "errorCode": 5,
-                    "details": {
-                        "diffNames": [
-                            [
-                                "TEXT_BASE"
-                            ],
-                            []
-                        ]
-                    },
-                    "filePaths": [
-                        "D:\\Work\\render-server\\interface\\rs.proto",
-                        "D:\\Work\\render-server\\src\\rs\\common\\model\\styleType.js"
-                    ]
-                },
-                {
-                    "errorCode": 1,
-                    "details": {
-                        "diffNames": [
-                            [
-                                "TEXT_BASE"
-                            ],
-                            []
-                        ]
-                    },
-                    "filePaths": [
-                        "D:\\Work\\render-server\\src\\rs\\common\\model\\styleType.js"
-                    ]
-                },                
-                {
-                    "errorCode": 5,
-                    "details": {
-                        "diffNames": [
-                            [
-                                "TEXT_BASE"
-                            ],
-                            []
-                        ]
-                    },
-                    "filePaths": [
-                        "D:\\Work\\render-server\\src\\rs\\api\\protocol\\rs.proto",
-                        "D:\\Work\\render-server\\src\\rs\\common\\model\\styleType.js"
-                    ]
-                }
-            ],
-            "productionErrors": [
-                {
-                    "errorCode": 5,
-                    "details": {
-                        "diffNames": [
-                            [
-                                "TEXT_BASE"
-                            ],
-                            []
-                        ]
-                    },
-                    "filePaths": [
-                        "D:\\Work\\render-server\\production\\interface\\rs.proto",
-                        "D:\\Work\\render-server\\production\\src\\rs\\common\\model\\styleType.js"
-                    ]
-                },
-                {
-                    "errorCode": 5,
-                    "details": {
-                        "diffNames": [
-                            [
-                                "TEXT_BASE"
-                            ],
-                            []
-                        ]
-                    },
-                    "filePaths": [
-                        "D:\\Work\\render-server\\production\\src\\rs\\api\\protocol\\rs.proto",
-                        "D:\\Work\\render-server\\production\\src\\rs\\common\\model\\styleType.js"
-                    ]
-                }
-            ]
+            "developmentErrors": [],
+            "productionErrors": []
         }
     },
     watch: {
